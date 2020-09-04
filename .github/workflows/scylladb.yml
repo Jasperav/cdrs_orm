@@ -1,0 +1,174 @@
+# This file is generated, don't edit
+
+name: tests-scylladb
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+  TEST_CDRS_DB_KEYSPACE_KEY: test_keyspace_for_testing
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      scylladb:
+        image: scylladb/scylla
+        ports:
+          - 9042:9042
+        options: --health-cmd "cqlsh --debug" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install minimal nightly with clippy and rustfmt
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt, clippy
+       # crates
+      - name: Build cdrs_orm_util
+        run: cargo build --package cdrs_orm_util --verbose
+      - name: Run tests cdrs_orm_util
+        run: cargo test --package cdrs_orm_util --verbose -- --test-threads=1
+      - name: Check clippy cdrs_orm_util
+        run: cargo +nightly clippy --package cdrs_orm_util -- -D warnings
+      - name: Check fmt cdrs_orm_util
+        run: cargo +nightly fmt --package cdrs_orm_util -- --check
+
+      - name: Build cdrs_con
+        run: cargo build --package cdrs_con --verbose
+      - name: Run tests cdrs_con
+        run: cargo test --package cdrs_con --verbose -- --test-threads=1
+      - name: Check clippy cdrs_con
+        run: cargo +nightly clippy --package cdrs_con -- -D warnings
+      - name: Check fmt cdrs_con
+        run: cargo +nightly fmt --package cdrs_con -- --check
+
+      - name: Build cdrs_db_mirror
+        run: cargo build --package cdrs_db_mirror --verbose
+      - name: Run tests cdrs_db_mirror
+        run: cargo test --package cdrs_db_mirror --verbose -- --test-threads=1
+      - name: Check clippy cdrs_db_mirror
+        run: cargo +nightly clippy --package cdrs_db_mirror -- -D warnings
+      - name: Check fmt cdrs_db_mirror
+        run: cargo +nightly fmt --package cdrs_db_mirror -- --check
+
+      - name: Build cdrs_query_writer
+        run: cargo build --package cdrs_query_writer --verbose
+      - name: Run tests cdrs_query_writer
+        run: cargo test --package cdrs_query_writer --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query_writer
+        run: cargo +nightly clippy --package cdrs_query_writer -- -D warnings
+      - name: Check fmt cdrs_query_writer
+        run: cargo +nightly fmt --package cdrs_query_writer -- --check
+
+      - name: Build cdrs_to_rust
+        run: cargo build --package cdrs_to_rust --verbose
+      - name: Run tests cdrs_to_rust
+        run: cargo test --package cdrs_to_rust --verbose -- --test-threads=1
+      - name: Check clippy cdrs_to_rust
+        run: cargo +nightly clippy --package cdrs_to_rust -- -D warnings
+      - name: Check fmt cdrs_to_rust
+        run: cargo +nightly fmt --package cdrs_to_rust -- --check
+
+      - name: Build cdrs_query
+        run: cargo build --package cdrs_query --verbose
+      - name: Run tests cdrs_query
+        run: cargo test --package cdrs_query --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query
+        run: cargo +nightly clippy --package cdrs_query -- -D warnings
+      - name: Check fmt cdrs_query
+        run: cargo +nightly fmt --package cdrs_query -- --check
+
+      - name: Build cdrs_query_example
+        run: cargo build --package cdrs_query_example --verbose
+      - name: Run tests cdrs_query_example
+        run: cargo test --package cdrs_query_example --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query_example
+        run: cargo +nightly clippy --package cdrs_query_example -- -D warnings
+      - name: Check fmt cdrs_query_example
+        run: cargo +nightly fmt --package cdrs_query_example -- --check
+
+      - name: Build cdrs_query_example_proc_macro
+        run: cargo build --package cdrs_query_example_proc_macro --verbose
+      - name: Run tests cdrs_query_example_proc_macro
+        run: cargo test --package cdrs_query_example_proc_macro --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query_example_proc_macro
+        run: cargo +nightly clippy --package cdrs_query_example_proc_macro -- -D warnings
+      - name: Check fmt cdrs_query_example_proc_macro
+        run: cargo +nightly fmt --package cdrs_query_example_proc_macro -- --check
+
+      - name: Build cdrs_query_simple
+        run: cargo build --package cdrs_query_simple --verbose
+      - name: Run tests cdrs_query_simple
+        run: cargo test --package cdrs_query_simple --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query_simple
+        run: cargo +nightly clippy --package cdrs_query_simple -- -D warnings
+      - name: Check fmt cdrs_query_simple
+        run: cargo +nightly fmt --package cdrs_query_simple -- --check
+
+      - name: Build cdrs_query_simple_example
+        run: cargo build --package cdrs_query_simple_example --verbose
+      - name: Run tests cdrs_query_simple_example
+        run: cargo test --package cdrs_query_simple_example --verbose -- --test-threads=1
+      - name: Check clippy cdrs_query_simple_example
+        run: cargo +nightly clippy --package cdrs_query_simple_example -- -D warnings
+      - name: Check fmt cdrs_query_simple_example
+        run: cargo +nightly fmt --package cdrs_query_simple_example -- --check
+
+      - name: Build example_db_mirror
+        run: cargo build --package example_db_mirror --verbose
+      - name: Run tests example_db_mirror
+        run: cargo test --package example_db_mirror --verbose -- --test-threads=1
+      - name: Check clippy example_db_mirror
+        run: cargo +nightly clippy --package example_db_mirror -- -D warnings
+      - name: Check fmt example_db_mirror
+        run: cargo +nightly fmt --package example_db_mirror -- --check
+
+      - name: Build example_impl_writer
+        run: cargo build --package example_impl_writer --verbose
+      - name: Run tests example_impl_writer
+        run: cargo test --package example_impl_writer --verbose -- --test-threads=1
+      - name: Check clippy example_impl_writer
+        run: cargo +nightly clippy --package example_impl_writer -- -D warnings
+      - name: Check fmt example_impl_writer
+        run: cargo +nightly fmt --package example_impl_writer -- --check
+
+      - name: Build custom_derive
+        run: cargo build --package custom_derive --verbose
+      - name: Run tests custom_derive
+        run: cargo test --package custom_derive --verbose -- --test-threads=1
+      - name: Check clippy custom_derive
+        run: cargo +nightly clippy --package custom_derive -- -D warnings
+      - name: Check fmt custom_derive
+        run: cargo +nightly fmt --package custom_derive -- --check
+
+      - name: Build cdrs_ci
+        run: cargo build --package cdrs_ci --verbose
+      - name: Run tests cdrs_ci
+        run: cargo test --package cdrs_ci --verbose -- --test-threads=1
+      - name: Check clippy cdrs_ci
+        run: cargo +nightly clippy --package cdrs_ci -- -D warnings
+      - name: Check fmt cdrs_ci
+        run: cargo +nightly fmt --package cdrs_ci -- --check
+
+      - name: Build internal_ci
+        run: cargo build --package internal_ci --verbose
+      - name: Run tests internal_ci
+        run: cargo test --package internal_ci --verbose -- --test-threads=1
+      - name: Check clippy internal_ci
+        run: cargo +nightly clippy --package internal_ci -- -D warnings
+      - name: Check fmt internal_ci
+        run: cargo +nightly fmt --package internal_ci -- --check
+
+      - name: Install cargo expand
+        run: cargo install cargo-expand
+      - name: Build test_derived_equals
+        run: cargo build --package test_derived_equals --verbose
+      - name: Run tests test_derived_equals
+        run: cargo test --package test_derived_equals --verbose -- --test-threads=1
+      - name: Check clippy test_derived_equals
+        run: cargo +nightly clippy --package test_derived_equals -- -D warnings
+      - name: Check fmt test_derived_equals
+        run: cargo +nightly fmt --package test_derived_equals -- --check
+

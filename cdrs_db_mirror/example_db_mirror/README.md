@@ -1,0 +1,1 @@
+This example demonstrates general CRUD operations on dummy tables

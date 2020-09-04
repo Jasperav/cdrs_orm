@@ -1,0 +1,26 @@
+name: tests-$CONTAINER$
+
+on: push
+
+env:
+  CARGO_TERM_COLOR: always
+  TEST_CDRS_DB_KEYSPACE_KEY: test_keyspace_for_testing
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      $CONTAINER$:
+        image: $IMAGE$
+        ports:
+          - 9042:9042
+        options: --health-cmd "cqlsh --debug" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install minimal nightly with clippy and rustfmt
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: rustfmt, clippy
+       # crates

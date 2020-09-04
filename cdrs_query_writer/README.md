@@ -1,0 +1,2 @@
+Writes the queries for DBMirror. If you create your own type that conforms to the Writer trait, you can easily 
+map the DBMirror functions to your own functions. See cdrs_db_mirror/example_impl_writer for an example

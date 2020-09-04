@@ -1,0 +1,22 @@
+[package]
+name = "cdrs_to_rust"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/jasperav/cdrs_orm"
+readme = "README.md"
+description = "Cassandra/ScyllaDB ORM: compile time and type checked queries, automatically maps tables to Rust structs and database queries utilities "
+categories = ["database"]
+keywords = ["cassandra", "scylla", "scylladb", "orm", "nosql"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
+quote = "1.0.*"
+syn = "1.0.*"
+r2d2 = "0.8.*"
+proc-macro2 = "1.0.*"
+cdrs_con = { path = "../cdrs_con" }

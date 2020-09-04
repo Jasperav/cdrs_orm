@@ -1,0 +1,19 @@
+[package]
+name = "example_db_mirror"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+
+[build-dependencies]
+cdrs_con = { path = "../../cdrs_con" }
+
+[dependencies]
+cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs_db_mirror = { path = "../../cdrs_db_mirror" }
+uuid = { version = "0.8.1", features = ["v4"] }
+serde = { version = "1.0.*", features = ["derive"] }
+serde_json = "1.0.*"
+cdrs_con = { path = "../../cdrs_con" }
+cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
+rand_derive2 = "0.1"
+rand = "0.7.*"

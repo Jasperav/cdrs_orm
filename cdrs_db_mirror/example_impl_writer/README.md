@@ -1,0 +1,1 @@
+This example demonstrates how to use the Writer trait so you can map custom functions to the DBMirror functions

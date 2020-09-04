@@ -1,0 +1,21 @@
+[workspace]
+members = [
+    "cdrs_orm_util",
+    "cdrs_db_mirror",
+    "cdrs_query",
+    "cdrs_query/cdrs_query_example",
+    "cdrs_query_simple",
+    "cdrs_query_simple/cdrs_query_simple_example",
+    "cdrs_db_mirror/example_db_mirror",
+    "cdrs_db_mirror/example_impl_writer",
+    "cdrs_db_mirror/example_impl_writer/custom_derive",
+    "cdrs_con",
+    "cdrs_to_rust",
+    "cdrs_query_writer",
+    "cdrs_ci",
+    "internal_ci",
+    # Make sure this is the last project
+    # This crate uses cargo expand and that takes a long time to install.
+    # To see quick test results from the other crates, make sure cargo expand installation is deplayed as long as possible.
+    "cdrs_db_mirror/test_derived_equals",
+]

@@ -1,0 +1,28 @@
+[package]
+name = "cdrs_db_mirror"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0.*"
+syn = { version = "1.0.*", features = ["full", "extra-traits"] }
+quote = "1.0.*"
+cdrs_query_writer = { path = "../cdrs_query_writer" }
+cdrs_con = { path = "../cdrs_con" }
+uuid = { version = "0.8", features = ["v4", "serde"] }
+serde = { version = "1.0.*", features = ["derive"] }
+serde_json = "1.0.*"
+rand_derive2 = "0.1"
+proc_macro2_helper = "0.2"
+
+[features]
+default = ["full", "extra-traits", "with-serde"]
+extra-traits = []
+full = []
+with-serde = []

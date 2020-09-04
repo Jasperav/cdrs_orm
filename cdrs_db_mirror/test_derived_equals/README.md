@@ -1,0 +1,1 @@
+Checks if the derived output is equal to a pre-generated file.

@@ -1,0 +1,16 @@
+[package]
+name = "cdrs_ci"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/jasperav/cdrs_orm"
+readme = "README.md"
+description = "Provides CI utilities for creating Cassandra and ScyllaDB workflow files"
+categories = ["database"]
+keywords = ["cassandra", "scylla", "scylladb", "orm", "nosql"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cargo_metadata = "0.11"

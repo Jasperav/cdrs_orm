@@ -1,0 +1,1 @@
+Utility to make it easy to create 2 workflow files (Cassandra and ScyllaDB) which can be used for CI

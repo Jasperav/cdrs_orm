@@ -1,0 +1,10 @@
+[package]
+name = "cdrs_query"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+quote = "1.0.*"
+syn = { version = "1.0.*", features = ["full", "extra-traits"] }
+cdrs_con = { path = "../cdrs_con" }
+proc-macro2 = "1.0.*"

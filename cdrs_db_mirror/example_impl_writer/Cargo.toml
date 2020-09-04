@@ -1,0 +1,26 @@
+[package]
+name = "example_impl_writer"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[build-dependencies]
+dotenv = "0.15.*"
+cdrs_con = { path = "../../cdrs_con" }
+quote = "1.0.*"
+cdrs_to_rust = { path = "../../cdrs_to_rust" }
+
+[dependencies]
+custom_derive = { path = "custom_derive" }
+cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs_db_mirror = { path = ".." }
+uuid = { version = "0.8.1", features = ["v4"] }
+quote = "1.0.*"
+cdrs_con = { path = "../../cdrs_con" }
+cdrs_to_rust = { path = "../../cdrs_to_rust" }
+serde_json = "1.0.*"
+serde = "1.0.*"
+rand = "0.7.*"
+rand_derive2 = "0.1"
+cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }

@@ -1,0 +1,15 @@
+[package]
+name = "cdrs_query_simple_example"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+cdrs_con = { path = "../../cdrs_con" }
+
+[dependencies]
+cdrs_con = { path = "../../cdrs_con" }
+cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs_query_simple = { path = "../../cdrs_query_simple" }

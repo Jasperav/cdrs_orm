@@ -1,0 +1,15 @@
+[package]
+name = "cdrs_query_simple"
+version = "0.1.0"
+authors = ["Jasper Visser <jasperav@hotmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = { version = "1.0", features = ["full", "extra-traits"] }
+quote = "1.0"
+cdrs_query = { path = "../cdrs_query" }
+cdrs_con = { path = "../cdrs_con" }
