@@ -138,7 +138,8 @@ fn comp_pb(left: &PathBuf, right: &PathBuf) {
 
 pub struct JSONMapping {
     pub import: String,
-    pub entity: proc_macro2::TokenStream,
+    pub raw_type: proc_macro2::TokenStream,
+    pub attributes: proc_macro2::TokenStream,
     pub nullable: bool,
 }
 
@@ -204,7 +205,7 @@ mod test {
                 if column_name.contains("json") {
                     return Some(JSONMapping {
                         import: "crate::MyJsonType".to_string(),
-                        entity: quote! {
+                        raw_type: quote! {
                             MyJsonType
                         },
                         nullable: column_name == "json_nullable",

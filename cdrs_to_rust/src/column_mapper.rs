@@ -41,11 +41,14 @@ pub(crate) fn column_to_property(
                     }
                 }
 
+                let attrs = mapping.attributes;
+
                 att.extend(quote! {
-                   #[json_mapped]
+                    #attrs
+                    #[json_mapped]
                 });
 
-                let ts = mapping.entity;
+                let ts = mapping.raw_type;
 
                 if mapping.nullable {
                     quote! {
