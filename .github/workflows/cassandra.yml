@@ -35,3 +35,21 @@ jobs:
       - name: Check fmt cdrs_orm_util
         run: cargo +nightly fmt --package cdrs_orm_util -- --check
 
+      - name: Build cdrs_con
+        run: cargo build --package cdrs_con --verbose
+      - name: Run tests cdrs_con
+        run: cargo test --package cdrs_con --verbose -- --test-threads=1
+      - name: Check clippy cdrs_con
+        run: cargo +nightly clippy --package cdrs_con -- -D warnings
+      - name: Check fmt cdrs_con
+        run: cargo +nightly fmt --package cdrs_con -- --check
+
+      - name: Build cdrs_db_mirror
+        run: cargo build --package cdrs_db_mirror --verbose
+      - name: Run tests cdrs_db_mirror
+        run: cargo test --package cdrs_db_mirror --verbose -- --test-threads=1
+      - name: Check clippy cdrs_db_mirror
+        run: cargo +nightly clippy --package cdrs_db_mirror -- -D warnings
+      - name: Check fmt cdrs_db_mirror
+        run: cargo +nightly fmt --package cdrs_db_mirror -- --check
+

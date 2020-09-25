@@ -5,6 +5,7 @@ use std::process::Command;
 use std::collections::HashMap;
 
 pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
+
     // Ignore results, since maybe the folders do not exists atm
     let _ = std::fs::remove_dir_all(workflow_dir);
     let _ = std::fs::create_dir_all(workflow_dir);
@@ -81,7 +82,7 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix:
     if fmt_and_fix {
         // Format and fix project directly
         execute_cargo_command("fmt", package, None, Default::default());
-        execute_cargo_command("fix", package, Some("--all-features"), Default::default());
+        execute_cargo_command("fix", package, Some(vec!["--all-features".to_string(), "--allow-dirty".to_string()]), Default::default());
     }
 
     // TODO: This does not work yet
@@ -113,7 +114,7 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix:
     // }
 }
 
-pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option<&str>, envs: HashMap<String, String>) {
+pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option<Vec<String>>, envs: HashMap<String, String>) {
     let mut args = vec![
         "+nightly".to_string(),
         command.to_string(),
@@ -122,7 +123,7 @@ pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option
     ];
 
     if let Some(command) = extra_command {
-        args.push(command.to_string());
+        args.extend(command);
     }
 
     let output = Command::new("cargo")
