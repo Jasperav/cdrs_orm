@@ -5,6 +5,21 @@ use std::process::Command;
 use std::collections::HashMap;
 
 pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
+    // Check if there are no uncommited changes, this is illegal.
+    // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
+    // a file twice, and if the first the the file has been changed by the cargo commands,
+    // it cargo will complain about uncommitted changes. This is fixed by passing the flag
+    // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
+    let output = Command::new("git")
+        .arg("diff")
+        .output()
+        .unwrap();
+
+    assert!(output.status.success());
+
+    if !output.stdout.is_empty() {
+        panic!("Uncommitted changes, please commit them first: {:#?}", String::from_utf8(output.stdout).unwrap());
+    }
 
     // Ignore results, since maybe the folders do not exists atm
     let _ = std::fs::remove_dir_all(workflow_dir);
