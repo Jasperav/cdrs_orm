@@ -5,7 +5,6 @@ pub use cdrs_to_rust;
 
 #[cfg(test)]
 mod test {
-    use super::*;
 
     #[test]
     fn test_compile() {}

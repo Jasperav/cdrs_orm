@@ -131,7 +131,7 @@ pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option
         .output()
         .unwrap();
 
-    if !output.stderr.is_empty() {
+    if !output.stderr.is_empty() && !output.status.success() {
         panic!("{:#?}", String::from_utf8(output.stderr).unwrap());
     }
 
