@@ -5,6 +5,7 @@ fn main() {
     let workflows = current_dir().unwrap().join("../.github").join("workflows");
     let (packages, images) = cdrs_ci::setup(&workflows);
     let template_string = String::from_utf8_lossy(include_bytes!("template.yml")).to_string();
+    let mut fmt_and_fix = true;
 
     for (container, image) in images.iter() {
         let mut yml = cdrs_ci::write_template(&workflows, container, image, &template_string);
@@ -16,7 +17,9 @@ fn main() {
                 writeln!(yml, "{}  run: cargo install cargo-expand", whitespace).unwrap();
             }
 
-            cdrs_ci::write_tests(&mut yml, whitespace, package);
+            cdrs_ci::write_tests(&mut yml, whitespace, package, fmt_and_fix);
         }
+
+        fmt_and_fix = false;
     }
 }

@@ -43,7 +43,7 @@ pub fn write_template(
     yml
 }
 
-pub fn write_tests(yml: &mut File, whitespace: &str, package: &str) {
+pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix: bool) {
     writeln!(yml, "{}- name: Build {}", whitespace, package).unwrap();
     writeln!(
         yml,
@@ -78,9 +78,11 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str) {
 
     writeln!(yml).unwrap();
 
-    // Format and fix project directly
-    execute_cargo_command("fmt", package, Default::default());
-    execute_cargo_command("fix", package, Default::default());
+    if fmt_and_fix {
+        // Format and fix project directly
+        execute_cargo_command("fmt", package, None, Default::default());
+        execute_cargo_command("fix", package, Some("--all-features"), Default::default());
+    }
 
     // TODO: This does not work yet
     // Command::new("cargo")
@@ -111,15 +113,27 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str) {
     // }
 }
 
-pub fn execute_cargo_command(command: &str, package: &str, envs: HashMap<String, String>) {
-    Command::new("cargo")
+pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option<&str>, envs: HashMap<String, String>) {
+    let mut args = vec![
+        "+nightly".to_string(),
+        command.to_string(),
+        "--package".to_string(),
+        package.to_string(),
+    ];
+
+    if let Some(command) = extra_command {
+        args.push(command.to_string());
+    }
+
+    let output = Command::new("cargo")
         .envs(&envs)
-        .args(&[
-            "+nightly".to_string(),
-            command.to_string(),
-            "--package".to_string(),
-            package.to_string(),
-        ])
+        .args(&args)
         .output()
         .unwrap();
+
+    if !output.stderr.is_empty() {
+        panic!("{:#?}", String::from_utf8(output.stderr).unwrap());
+    }
+
+    assert!(output.status.success());
 }
