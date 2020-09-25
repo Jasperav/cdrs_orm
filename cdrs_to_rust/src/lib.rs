@@ -208,6 +208,7 @@ mod test {
                         raw_type: quote! {
                             MyJsonType
                         },
+                        attributes: Default::default(),
                         nullable: column_name == "json_nullable",
                     });
                 }
