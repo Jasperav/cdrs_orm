@@ -2,6 +2,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
+use std::collections::HashMap;
 
 pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
     // Ignore results, since maybe the folders do not exists atm
@@ -110,8 +111,9 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str) {
     // }
 }
 
-fn execute_cargo_command(command: &str, package: &str) {
+pub fn execute_cargo_command(command: &str, package: &str, envs: HashMap<String, String>) {
     Command::new("cargo")
+        .envs(&envs)
         .args(&[
             "+nightly".to_string(),
             command.to_string(),
