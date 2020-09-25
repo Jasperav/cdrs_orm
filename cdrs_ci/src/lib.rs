@@ -79,8 +79,8 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str) {
     writeln!(yml).unwrap();
 
     // Format and fix project directly
-    execute_cargo_command("fmt", package);
-    execute_cargo_command("fix", package);
+    execute_cargo_command("fmt", package, Default::default());
+    execute_cargo_command("fix", package, Default::default());
 
     // TODO: This does not work yet
     // Command::new("cargo")
