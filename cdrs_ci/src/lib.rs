@@ -1,26 +1,29 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
-use std::collections::HashMap;
 
 pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
+    std::env::set_var("RUST_LOG", "info");
+    // Ignore error
+    let _ = env_logger::try_init();
+
+    log::info!("Checking for uncommited changes...");
     // Check if there are no uncommited changes, this is illegal.
     // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
     // a file twice, and if the first the the file has been changed by the cargo commands,
     // it cargo will complain about uncommitted changes. This is fixed by passing the flag
     // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
-    let output = Command::new("git")
-        .arg("diff")
-        .output()
-        .unwrap();
+    let output = Command::new("git").arg("diff").output().unwrap();
 
     assert!(output.status.success());
 
-    if !output.stdout.is_empty() {
-        panic!("Uncommitted changes, please commit them first: {:#?}", String::from_utf8(output.stdout).unwrap());
-    }
+    // if !output.stdout.is_empty() {
+    //     panic!("Uncommitted changes, please commit them first: {:#?}", String::from_utf8(output.stdout).unwrap());
+    // }
 
+    log::info!("Removing old workflow folders");
     // Ignore results, since maybe the folders do not exists atm
     let _ = std::fs::remove_dir_all(workflow_dir);
     let _ = std::fs::create_dir_all(workflow_dir);
@@ -60,6 +63,8 @@ pub fn write_template(
 }
 
 pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix: bool) {
+    log::info!("Writing tests for package: {}", package);
+
     writeln!(yml, "{}- name: Build {}", whitespace, package).unwrap();
     writeln!(
         yml,
@@ -95,9 +100,38 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix:
     writeln!(yml).unwrap();
 
     if fmt_and_fix {
+        log::info!("Verifying package {}", package);
+
+        let mut env = HashMap::new();
+
+        env.insert(
+            "TEST_CDRS_DB_KEYSPACE_KEY".to_string(),
+            "test_keyspace_for_testing".to_string(),
+        );
+
         // Format and fix project directly
-        execute_cargo_command("fmt", package, None, Default::default());
-        execute_cargo_command("fix", package, Some(vec!["--all-features".to_string(), "--allow-dirty".to_string()]), Default::default());
+        log::info!("Cleaning...");
+        execute_cargo_command("clean", package, None, &env);
+        log::info!("Building...");
+        execute_cargo_command("build", package, None, &env);
+        log::info!("Formatting...");
+        execute_cargo_command("fmt", package, None, &env);
+        log::info!("Fixing...");
+        execute_cargo_command(
+            "fix",
+            package,
+            Some(vec!["--all-features", "--allow-dirty"]),
+            &env,
+        );
+        log::info!("Testing...");
+        execute_cargo_command(
+            "test",
+            package,
+            Some(vec!["--verbose", "--", "--test-threads=1"]),
+            &env,
+        );
+
+        log::info!("Done verifying package");
     }
 
     // TODO: This does not work yet
@@ -129,7 +163,12 @@ pub fn write_tests(yml: &mut File, whitespace: &str, package: &str, fmt_and_fix:
     // }
 }
 
-pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option<Vec<String>>, envs: HashMap<String, String>) {
+pub fn execute_cargo_command(
+    command: &str,
+    package: &str,
+    extra_command: Option<Vec<&str>>,
+    envs: &HashMap<String, String>,
+) {
     let mut args = vec![
         "+nightly".to_string(),
         command.to_string(),
@@ -138,11 +177,16 @@ pub fn execute_cargo_command(command: &str, package: &str, extra_command: Option
     ];
 
     if let Some(command) = extra_command {
-        args.extend(command);
+        let string_vec = command
+            .into_iter()
+            .map(|c| c.to_string())
+            .collect::<Vec<_>>();
+
+        args.extend(string_vec);
     }
 
     let output = Command::new("cargo")
-        .envs(&envs)
+        .envs(envs)
         .args(&args)
         .output()
         .unwrap();
