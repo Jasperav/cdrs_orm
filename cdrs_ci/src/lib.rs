@@ -143,7 +143,7 @@ pub fn write_tests(
         execute_command(
             "fix",
             package,
-            Some(vec!["--all-features", "--allow-dirty"]),
+            Some(vec!["--all-features", "--allow-dirty", "--allow-staged"]),
         );
         // No clean and build needed for this
         log::info!("Testing...");
