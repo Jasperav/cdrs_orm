@@ -5,26 +5,31 @@ use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
+pub fn setup(
+    workflow_dir: &Path,
+    allow_dirty: bool,
+) -> (Vec<String>, [(&'static str, &'static str); 2]) {
     std::env::set_var("RUST_LOG", "info");
     // Ignore error
     let _ = env_logger::try_init();
 
-    log::info!("Checking for uncommited changes...");
-    // Check if there are no uncommited changes, this is illegal.
-    // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
-    // a file twice, and if the first the the file has been changed by the cargo commands,
-    // it cargo will complain about uncommitted changes. This is fixed by passing the flag
-    // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
-    let output = Command::new("git").arg("diff").output().unwrap();
+    if !allow_dirty {
+        log::info!("Checking for uncommited changes...");
+        // Check if there are no uncommited changes, this is illegal.
+        // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
+        // a file twice, and if the first the the file has been changed by the cargo commands,
+        // it cargo will complain about uncommitted changes. This is fixed by passing the flag
+        // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
+        let output = Command::new("git").arg("diff").output().unwrap();
 
-    assert!(output.status.success());
+        assert!(output.status.success());
 
-    if !output.stdout.is_empty() {
-        panic!(
-            "Uncommitted changes, please commit them first: {}",
-            String::from_utf8(output.stdout).unwrap()
-        );
+        if !output.stdout.is_empty() {
+            panic!(
+                "Uncommitted changes, please commit them first: {}",
+                String::from_utf8(output.stdout).unwrap()
+            );
+        }
     }
 
     log::info!("Removing old workflow folders");
