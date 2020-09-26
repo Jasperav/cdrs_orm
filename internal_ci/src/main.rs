@@ -17,7 +17,7 @@ fn main() {
                 writeln!(yml, "{}  run: cargo install cargo-expand", whitespace).unwrap();
             }
 
-            cdrs_ci::write_tests(&mut yml, whitespace, package, fmt_and_fix);
+            cdrs_ci::write_tests(&mut yml, whitespace, package, fmt_and_fix, "internal_ci");
         }
 
         fmt_and_fix = false;
