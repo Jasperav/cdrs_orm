@@ -5,7 +5,6 @@ use std::path::Path;
 use std::process::Command;
 
 pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
-    std::env::set_var("RUST_LOG", "info");
     // Ignore error
     let _ = env_logger::try_init();
 
