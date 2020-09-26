@@ -18,6 +18,10 @@ There are CI tests for Cassandra and ScyllaDB.
 - this crate does use https://github.com/Jasperav/cdrs. If the open PR's on https://github.com/AlexPikalov/cdrs are merged,
 that cdrs crate will be used
 - not all types are supported yet. Feel free to add them! Supported types can be found in CassandraDataType in crate cdrs_con.  
+- currently only available through git, not by crates.io (because the PR's aren't merged in the cdrs branch).
+
+## Contributing
+- Before creating a PR, make sure to run to run the executable 'internal-ci'. This will validate the code and run tests.
 
 ## Usage
 

@@ -161,3 +161,14 @@ jobs:
       - name: Check fmt internal_ci
         run: cargo +nightly fmt --package internal_ci -- --check
 
+      - name: Install cargo expand
+        run: cargo install cargo-expand
+      - name: Build test_derived_equals
+        run: cargo build --package test_derived_equals --verbose
+      - name: Run tests test_derived_equals
+        run: cargo test --package test_derived_equals --verbose -- --test-threads=1
+      - name: Check clippy test_derived_equals
+        run: cargo +nightly clippy --package test_derived_equals -- -D warnings
+      - name: Check fmt test_derived_equals
+        run: cargo +nightly fmt --package test_derived_equals -- --check
+
