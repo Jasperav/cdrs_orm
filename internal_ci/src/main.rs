@@ -2,8 +2,9 @@ use std::env::current_dir;
 use std::io::Write;
 
 fn main() {
+    dotenv::dotenv().unwrap();
     let workflows = current_dir().unwrap().join("../.github").join("workflows");
-    let (packages, images) = cdrs_ci::setup(&workflows, false);
+    let (packages, images) = cdrs_ci::setup(&workflows);
     let template_string = String::from_utf8_lossy(include_bytes!("template.yml")).to_string();
     let mut fmt_and_fix = true;
 

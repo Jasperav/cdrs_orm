@@ -1,34 +1,32 @@
-use std::collections::HashMap;
 use std::env::{current_dir, set_current_dir};
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-pub fn setup(
-    workflow_dir: &Path,
-    allow_dirty: bool,
-) -> (Vec<String>, [(&'static str, &'static str); 2]) {
+pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str); 2]) {
     std::env::set_var("RUST_LOG", "info");
     // Ignore error
     let _ = env_logger::try_init();
 
-    if !allow_dirty {
-        log::info!("Checking for uncommited changes...");
-        // Check if there are no uncommited changes, this is illegal.
-        // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
-        // a file twice, and if the first the the file has been changed by the cargo commands,
-        // it cargo will complain about uncommitted changes. This is fixed by passing the flag
-        // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
-        let output = Command::new("git").arg("diff").output().unwrap();
+    if let Ok(allow_dirty) = std::env::var("ALLOW_DIRTY") {
+        if &allow_dirty != "1" {
+            log::info!("Checking for uncommited changes...");
+            // Check if there are no uncommited changes, this is illegal.
+            // This is because later on, cargo fmt and fix will run. It can occur it will try to fix
+            // a file twice, and if the first the the file has been changed by the cargo commands,
+            // it cargo will complain about uncommitted changes. This is fixed by passing the flag
+            // --allow-dirty, but to make sure not to overwrite non-cargo related changes, check the diff here.
+            let output = Command::new("git").arg("diff").output().unwrap();
 
-        assert!(output.status.success());
+            assert!(output.status.success());
 
-        if !output.stdout.is_empty() {
-            panic!(
-                "Uncommitted changes, please commit them first: {}",
-                String::from_utf8(output.stdout).unwrap()
-            );
+            if !output.stdout.is_empty() {
+                panic!(
+                    "Uncommitted changes, please commit them first: {}",
+                    String::from_utf8(output.stdout).unwrap()
+                );
+            }
         }
     }
 
@@ -123,13 +121,6 @@ pub fn write_tests(
     if fmt_and_fix {
         log::info!("Verifying package {}", package);
 
-        let mut env = HashMap::new();
-
-        env.insert(
-            "TEST_CDRS_DB_KEYSPACE_KEY".to_string(),
-            "test_keyspace_for_testing".to_string(),
-        );
-
         // Execute this before running a command, because there are bugs preventing cargo to run
         // checks the second time without a rebuild/touch (https://stackoverflow.com/questions/31125226/is-it-possible-to-have-cargo-always-show-warnings)
         let clean_and_build = || {
@@ -138,15 +129,15 @@ pub fn write_tests(
             // (removing the executable while executing the program)
             if package != package_name_currently_executing {
                 log::info!("Cleaning...");
-                execute_command("clean", package, None, &env);
+                execute_command("clean", package, None);
                 log::info!("Building...");
-                execute_command("build", package, None, &env);
+                execute_command("build", package, None);
             }
         };
 
         clean_and_build();
         log::info!("Formatting...");
-        execute_command("fmt", package, None, &env);
+        execute_command("fmt", package, None);
 
         clean_and_build();
         log::info!("Fixing...");
@@ -154,7 +145,6 @@ pub fn write_tests(
             "fix",
             package,
             Some(vec!["--all-features", "--allow-dirty"]),
-            &env,
         );
         // No clean and build needed for this
         log::info!("Testing...");
@@ -164,23 +154,17 @@ pub fn write_tests(
             // Test threads is 1, because in tests sometimes tables be added, keyspace are being recreated,
             // if that all goes down at the same time, error will be thrown
             Some(vec!["--verbose", "--", "--test-threads=1"]),
-            &env,
         );
 
         clean_and_build();
         log::info!("Running clippy...");
-        execute_command("clippy", package, Some(vec!["--", "-D", "warnings"]), &env);
+        execute_command("clippy", package, Some(vec!["--", "-D", "warnings"]));
 
         log::info!("Done verifying package");
     }
 }
 
-pub fn execute_command(
-    command: &str,
-    package: &str,
-    extra_command: Option<Vec<&str>>,
-    envs: &HashMap<String, String>,
-) {
+pub fn execute_command(command: &str, package: &str, extra_command: Option<Vec<&str>>) {
     let mut args = vec![
         "+nightly".to_string(),
         command.to_string(),
@@ -197,11 +181,7 @@ pub fn execute_command(
         args.extend(string_vec);
     }
 
-    let output = Command::new("cargo")
-        .envs(envs)
-        .args(&args)
-        .output()
-        .unwrap();
+    let output = Command::new("cargo").args(&args).output().unwrap();
 
     if !output.stderr.is_empty() && !output.status.success() {
         panic!("{}", String::from_utf8(output.stderr).unwrap());
