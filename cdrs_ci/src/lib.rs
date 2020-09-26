@@ -9,7 +9,7 @@ pub fn setup(workflow_dir: &Path) -> (Vec<String>, [(&'static str, &'static str)
     // Ignore error
     let _ = env_logger::try_init();
 
-    if let Ok(allow_dirty) = std::env::var("ALLOW_DIRTY") {
+    if let Ok(allow_dirty) = std::env::var("ALLOW_DIRTY_CI") {
         if &allow_dirty != "1" {
             log::info!("Checking for uncommited changes...");
             // Check if there are no uncommited changes, this is illegal.
