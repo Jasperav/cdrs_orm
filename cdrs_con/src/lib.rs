@@ -212,6 +212,6 @@ mod test {
     fn test_connection() {
         let s = create_test_db_session();
 
-        s.query(format!("drop keyspace if exists sada")).unwrap();
+        s.query("drop keyspace if exists sada".to_string()).unwrap();
     }
 }

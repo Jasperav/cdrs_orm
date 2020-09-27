@@ -137,15 +137,12 @@ pub fn write_tests(
         clean_and_build();
         log::info!("Formatting...");
         execute_command("fmt", package, None);
-
-        clean_and_build();
         log::info!("Fixing...");
         execute_command(
             "fix",
             package,
             Some(vec!["--all-features", "--allow-dirty", "--allow-staged"]),
         );
-        // No clean and build needed for this
         log::info!("Testing...");
         execute_command(
             "test",
@@ -155,8 +152,22 @@ pub fn write_tests(
             Some(vec!["--verbose", "--", "--test-threads=1"]),
         );
 
+        log::info!("Running clippy fixes...");
+        execute_command(
+            "clippy",
+            package,
+            Some(vec![
+                "--fix",
+                "-Z",
+                "unstable-options",
+                "--allow-dirty",
+                "--allow-staged",
+            ]),
+        );
+
+        // Clean and reubild again, it's needed because else clippy doesn't pick up anything
         clean_and_build();
-        log::info!("Running clippy...");
+        log::info!("Running clippy checks...");
         execute_command("clippy", package, Some(vec!["--", "-D", "warnings"]));
 
         log::info!("Done verifying package");
