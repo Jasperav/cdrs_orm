@@ -191,6 +191,13 @@ pub fn execute_command(command: &str, package: &str, extra_command: Option<Vec<&
         args.extend(string_vec);
     }
 
+    // TODO: Not sure how to get rid of the double command initialization, but args returns a &mut
+    // and I am not sure how reuse the same command
+    let formatted = format!("{:#?}", Command::new("cargo").args(&args));
+    // Remove the quotes
+    let no_quotes = formatted.replace("\"", "");
+    log::debug!("Executing command: {}", no_quotes);
+
     let output = Command::new("cargo").args(&args).output().unwrap();
 
     if !output.stderr.is_empty() && !output.status.success() {
