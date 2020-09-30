@@ -81,100 +81,81 @@ pub fn write_tests(
     fmt_and_fix: bool,
     package_name_currently_executing: &str,
 ) {
-    log::info!("Writing tests for package: {}", package);
+    log::info!("Verifying package {}", package);
 
-    writeln!(yml, "{}- name: Build {}", whitespace, package).unwrap();
-    writeln!(
-        yml,
-        "{}  run: cargo build --package {} --verbose",
-        whitespace, package
-    )
-    .unwrap();
+    // Execute this before running a command, because there are bugs preventing cargo to run
+    // checks the second time without a rebuild/touch (https://stackoverflow.com/questions/31125226/is-it-possible-to-have-cargo-always-show-warnings)
+    let clean_and_build = |yml: &mut File| {
+        // Format and fix project directly
+        // Only clean if the current package isn't the CI package, since that isn't possible
+        // (removing the executable while executing the program)
+        if package != package_name_currently_executing {
+            log::info!("Cleaning...");
+            execute_command(fmt_and_fix, yml, whitespace, "clean", package, None);
+            log::info!("Building...");
+            execute_command(fmt_and_fix, yml, whitespace, "build", package, None);
+        }
+    };
 
-    writeln!(yml, "{}- name: Run tests {}", whitespace, package).unwrap();
-    writeln!(
+    clean_and_build(yml);
+    execute_command(fmt_and_fix, yml, whitespace, "fmt", package, None);
+    execute_command(
+        fmt_and_fix,
         yml,
-        "{}  run: cargo test --package {} --verbose -- --test-threads=1",
-        whitespace, package
-    )
-    .unwrap();
+        whitespace,
+        "fix",
+        package,
+        Some(vec!["--all-features", "--allow-dirty", "--allow-staged"]),
+    );
+    execute_command(
+        fmt_and_fix,
+        yml,
+        whitespace,
+        "test",
+        package,
+        // Test threads is 1, because in tests sometimes tables be added, keyspace are being recreated,
+        // if that all goes down at the same time, error will be thrown
+        Some(vec!["--verbose", "--", "--test-threads=1"]),
+    );
+    execute_command(
+        fmt_and_fix,
+        yml,
+        whitespace,
+        "clippy",
+        package,
+        Some(vec![
+            "--fix",
+            "-Z",
+            "unstable-options",
+            "--allow-dirty",
+            "--allow-staged",
+        ]),
+    );
 
-    writeln!(yml, "{}- name: Check clippy {}", whitespace, package).unwrap();
-    writeln!(
+    // Clean and rebuild again, it's needed because else clippy doesn't pick up anything
+    clean_and_build(yml);
+    execute_command(
+        fmt_and_fix,
         yml,
-        "{}  run: cargo +nightly clippy --package {} -- -D warnings",
-        whitespace, package
-    )
-    .unwrap();
-
-    writeln!(yml, "{}- name: Check fmt {}", whitespace, package).unwrap();
-    writeln!(
-        yml,
-        "{}  run: cargo +nightly fmt --package {} -- --check",
-        whitespace, package
-    )
-    .unwrap();
+        whitespace,
+        "clippy",
+        package,
+        Some(vec!["--", "-D", "warnings"]),
+    );
 
     writeln!(yml).unwrap();
 
-    if fmt_and_fix {
-        log::info!("Verifying package {}", package);
-
-        // Execute this before running a command, because there are bugs preventing cargo to run
-        // checks the second time without a rebuild/touch (https://stackoverflow.com/questions/31125226/is-it-possible-to-have-cargo-always-show-warnings)
-        let clean_and_build = || {
-            // Format and fix project directly
-            // Only clean if the current package isn't the CI package, since that isn't possible
-            // (removing the executable while executing the program)
-            if package != package_name_currently_executing {
-                log::info!("Cleaning...");
-                execute_command("clean", package, None);
-                log::info!("Building...");
-                execute_command("build", package, None);
-            }
-        };
-
-        clean_and_build();
-        log::info!("Formatting...");
-        execute_command("fmt", package, None);
-        log::info!("Fixing...");
-        execute_command(
-            "fix",
-            package,
-            Some(vec!["--all-features", "--allow-dirty", "--allow-staged"]),
-        );
-        log::info!("Testing...");
-        execute_command(
-            "test",
-            package,
-            // Test threads is 1, because in tests sometimes tables be added, keyspace are being recreated,
-            // if that all goes down at the same time, error will be thrown
-            Some(vec!["--verbose", "--", "--test-threads=1"]),
-        );
-
-        log::info!("Running clippy fixes...");
-        execute_command(
-            "clippy",
-            package,
-            Some(vec![
-                "--fix",
-                "-Z",
-                "unstable-options",
-                "--allow-dirty",
-                "--allow-staged",
-            ]),
-        );
-
-        // Clean and reubild again, it's needed because else clippy doesn't pick up anything
-        clean_and_build();
-        log::info!("Running clippy checks...");
-        execute_command("clippy", package, Some(vec!["--", "-D", "warnings"]));
-
-        log::info!("Done verifying package");
-    }
+    log::info!("Done verifying package");
 }
 
-pub fn execute_command(command: &str, package: &str, extra_command: Option<Vec<&str>>) {
+pub fn execute_command(
+    fmt_and_fix: bool,
+    yml: &mut File,
+    whitespace: &str,
+    command: &str,
+    package: &str,
+    extra_command: Option<Vec<&str>>,
+) {
     let mut args = vec![
         "+nightly".to_string(),
         command.to_string(),
@@ -198,11 +179,16 @@ pub fn execute_command(command: &str, package: &str, extra_command: Option<Vec<&
     let no_quotes = formatted.replace("\"", "");
     log::debug!("Executing command: {}", no_quotes);
 
-    let output = Command::new("cargo").args(&args).output().unwrap();
+    writeln!(yml, "{}- name: {} {}", whitespace, command, package).unwrap();
+    writeln!(yml, "{}  run: {}", whitespace, no_quotes).unwrap();
 
-    if !output.stderr.is_empty() && !output.status.success() {
-        panic!("{}", String::from_utf8(output.stderr).unwrap());
+    if fmt_and_fix {
+        let output = Command::new("cargo").args(&args).output().unwrap();
+
+        if !output.stderr.is_empty() && !output.status.success() {
+            panic!("{}", String::from_utf8(output.stderr).unwrap());
+        }
+
+        assert!(output.status.success());
     }
-
-    assert!(output.status.success());
 }
