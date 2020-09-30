@@ -90,9 +90,7 @@ pub fn write_tests(
         // Only clean if the current package isn't the CI package, since that isn't possible
         // (removing the executable while executing the program)
         if package != package_name_currently_executing {
-            log::info!("Cleaning...");
             execute_command(fmt_and_fix, yml, whitespace, "clean", package, None);
-            log::info!("Building...");
             execute_command(fmt_and_fix, yml, whitespace, "build", package, None);
         }
     };
