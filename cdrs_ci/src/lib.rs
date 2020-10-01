@@ -91,7 +91,14 @@ pub fn write_tests(
         // (removing the executable while executing the program)
         if package != package_name_currently_executing {
             execute_command(fmt_and_fix, yml, whitespace, "clean", package, None);
-            execute_command(fmt_and_fix, yml, whitespace, "build", package, None);
+            execute_command(
+                fmt_and_fix,
+                yml,
+                whitespace,
+                "build",
+                package,
+                Some(vec!["--jobs=1"]),
+            );
         }
     };
 
@@ -103,7 +110,12 @@ pub fn write_tests(
         whitespace,
         "fix",
         package,
-        Some(vec!["--all-features", "--allow-dirty", "--allow-staged"]),
+        Some(vec![
+            "--all-features",
+            "--allow-dirty",
+            "--allow-staged",
+            "--jobs=1",
+        ]),
     );
     execute_command(
         fmt_and_fix,
