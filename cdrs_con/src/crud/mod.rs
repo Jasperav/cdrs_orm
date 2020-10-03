@@ -2,12 +2,14 @@ mod crud_operation;
 mod delete;
 mod insert;
 mod select;
+mod truncate;
 mod update;
 
 use crate::crud::crud_operation::CRUDOperation;
 use delete::*;
 use insert::*;
 use select::*;
+use truncate::*;
 use update::*;
 
 /// Represents a column that is used in a query
@@ -33,12 +35,13 @@ pub(crate) fn create_query_crud(query: &str) -> Box<dyn CRUDOperation> {
         Box::new(Update),
         Box::new(Insert),
         Box::new(Delete),
+        Box::new(Truncate),
     ];
 
     cruds
         .into_iter()
         .find(|c| query.starts_with(c.crud_query_start()))
-        .expect("Queries should start with select, update, delete or insert")
+        .expect("Queries should start with select, update, delete, insert or truncate")
 }
 
 /// The different types of a query
@@ -61,6 +64,8 @@ pub enum QueryType {
     DeleteUnique,
     /// Inserts a single row
     InsertUnique,
+    /// Truncates a table
+    Truncate,
 }
 
 /// Extracts a table name from a query

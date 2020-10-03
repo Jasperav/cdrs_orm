@@ -74,5 +74,7 @@ mod test {
             a,
             val
         );
+
+        assert_eq!(8, control!("truncate test_table").0);
     }
 }

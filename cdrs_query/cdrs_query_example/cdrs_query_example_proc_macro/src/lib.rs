@@ -19,6 +19,7 @@ pub fn control(input: TokenStream) -> TokenStream {
         QueryType::DeleteMultiple => 5,
         QueryType::DeleteUnique => 6,
         QueryType::InsertUnique => 7,
+        QueryType::Truncate => 8,
     };
     let qv = query.qv;
 
