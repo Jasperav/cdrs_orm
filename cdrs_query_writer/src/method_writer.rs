@@ -1,7 +1,7 @@
 use crate::{
     pk_parameter, pk_struct, read_attributes, updateable_columns_enum, COLUMN_SEPARATOR,
-    DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_UNIQUE, UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS,
-    UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
+    DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, UPDATE_MULTIPLE_COLUMNS,
+    UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
 use cdrs_con::capitalizing::struct_name_to_db_table_name;
 use cdrs_con::create_test_db_session;
@@ -16,6 +16,7 @@ pub enum CRUD<'a> {
     UpdateUnique(Update<'a>),
     SelectUnique,
     SelectAll,
+    SelectAllCount,
     DeleteUnique,
 }
 
@@ -78,6 +79,9 @@ pub trait Writer {
     }
     fn fn_name_select_all(&self) -> &'static str {
         SELECT_ALL
+    }
+    fn fn_name_select_all_count(&self) -> &'static str {
+        SELECT_ALL_COUNT
     }
     fn fn_name_delete_unique(&self) -> &'static str {
         DELETE_UNIQUE

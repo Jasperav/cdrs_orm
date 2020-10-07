@@ -120,8 +120,8 @@ mod generated_some_struct {
                 &self,
                 __serializer: __S,
             ) -> _serde::export::Result<__S::Ok, __S::Error>
-                where
-                    __S: _serde::Serializer,
+            where
+                __S: _serde::Serializer,
             {
                 let mut __serde_state = match _serde::Serializer::serialize_struct(
                     __serializer,
@@ -185,8 +185,8 @@ mod generated_some_struct {
         #[automatically_derived]
         impl<'de> _serde::Deserialize<'de> for SomeStructPrimaryKey {
             fn deserialize<__D>(__deserializer: __D) -> _serde::export::Result<Self, __D::Error>
-                where
-                    __D: _serde::Deserializer<'de>,
+            where
+                __D: _serde::Deserializer<'de>,
             {
                 #[allow(non_camel_case_types)]
                 enum __Field {
@@ -209,8 +209,8 @@ mod generated_some_struct {
                         self,
                         __value: u64,
                     ) -> _serde::export::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             0u64 => _serde::export::Ok(__Field::__field0),
@@ -227,8 +227,8 @@ mod generated_some_struct {
                         self,
                         __value: &str,
                     ) -> _serde::export::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             "id" => _serde::export::Ok(__Field::__field0),
@@ -242,8 +242,8 @@ mod generated_some_struct {
                         self,
                         __value: &[u8],
                     ) -> _serde::export::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             b"id" => _serde::export::Ok(__Field::__field0),
@@ -259,8 +259,8 @@ mod generated_some_struct {
                     fn deserialize<__D>(
                         __deserializer: __D,
                     ) -> _serde::export::Result<Self, __D::Error>
-                        where
-                            __D: _serde::Deserializer<'de>,
+                    where
+                        __D: _serde::Deserializer<'de>,
                     {
                         _serde::Deserializer::deserialize_identifier(__deserializer, __FieldVisitor)
                     }
@@ -285,8 +285,8 @@ mod generated_some_struct {
                         self,
                         mut __seq: __A,
                     ) -> _serde::export::Result<Self::Value, __A::Error>
-                        where
-                            __A: _serde::de::SeqAccess<'de>,
+                    where
+                        __A: _serde::de::SeqAccess<'de>,
                     {
                         let __field0 =
                             match match _serde::de::SeqAccess::next_element::<i32>(&mut __seq) {
@@ -360,20 +360,20 @@ mod generated_some_struct {
                         self,
                         mut __map: __A,
                     ) -> _serde::export::Result<Self::Value, __A::Error>
-                        where
-                            __A: _serde::de::MapAccess<'de>,
+                    where
+                        __A: _serde::de::MapAccess<'de>,
                     {
                         let mut __field0: _serde::export::Option<i32> = _serde::export::None;
                         let mut __field1: _serde::export::Option<i32> = _serde::export::None;
                         let mut __field2: _serde::export::Option<i32> = _serde::export::None;
                         let mut __field3: _serde::export::Option<i32> = _serde::export::None;
                         while let _serde::export::Some(__key) =
-                        match _serde::de::MapAccess::next_key::<__Field>(&mut __map) {
-                            _serde::export::Ok(__val) => __val,
-                            _serde::export::Err(__err) => {
-                                return _serde::export::Err(__err);
+                            match _serde::de::MapAccess::next_key::<__Field>(&mut __map) {
+                                _serde::export::Ok(__val) => __val,
+                                _serde::export::Err(__err) => {
+                                    return _serde::export::Err(__err);
+                                }
                             }
-                        }
                         {
                             match __key {
                                 __Field::__field0 => {
@@ -530,9 +530,9 @@ mod generated_some_struct {
     }
     impl cdrs::types::prelude::TryFromRow for SomeStructPrimaryKey {
         fn try_from_row(cdrs: cdrs::types::rows::Row) -> cdrs::Result<Self> {
+            use cdrs::frame::TryFromUDT;
             use cdrs::types::from_cdrs::FromCDRSByName;
             use cdrs::types::AsRustType;
-            use cdrs::frame::TryFromUDT;
             Ok(SomeStructPrimaryKey {
                 id: i32::from_cdrs_r(&cdrs, " id ".trim())?,
                 another_id: i32::from_cdrs_r(&cdrs, " another_id ".trim())?,
@@ -769,6 +769,15 @@ mod generated_some_struct {
         pub fn select_all_q() -> (&'static str, cdrs::query::QueryValues) {
             (
                 SomeStruct::SELECT_ALL_QUERY,
+                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
+            )
+        }
+    }
+    impl SomeStruct {
+        pub const SELECT_ALL_COUNT_QUERY: &'static str = "select count(*) from SomeStruct";
+        pub fn select_all_count_q() -> (&'static str, cdrs::query::QueryValues) {
+            (
+                SomeStruct::SELECT_ALL_COUNT_QUERY,
                 cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
             )
         }

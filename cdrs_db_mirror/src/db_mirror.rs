@@ -45,9 +45,18 @@ impl Writer for ImplWriter {
             CRUD::SelectUnique => {
                 crate::cdrs_query_writers::select::generate_unique(inf, db_mirror_fn_name)
             }
-            CRUD::SelectAll => {
-                crate::cdrs_query_writers::select::generate_all(inf, db_mirror_fn_name)
-            }
+            CRUD::SelectAll => crate::cdrs_query_writers::select::generate_all(
+                inf,
+                db_mirror_fn_name,
+                "*",
+                "SELECT_ALL_QUERY",
+            ),
+            CRUD::SelectAllCount => crate::cdrs_query_writers::select::generate_all(
+                inf,
+                db_mirror_fn_name,
+                "count(*)",
+                "SELECT_ALL_COUNT_QUERY",
+            ),
         }
     }
 }

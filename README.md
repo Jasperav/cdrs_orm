@@ -40,6 +40,7 @@ Follow the steps below to have always in sync Rust structs derived from the data
 2. Create your own function mapping with the cdrs_db_mirror so you have your own business logic with pre-generated queries.
 3. Use the cdrs_query_simple crate for compile time and type checked queries (note: set the TEST_CDRS_DB_KEYSPACE_KEY env var
 to a test keyspace).
+4. To see a full expanded entity with the db_mirror attribute, see package test_derived_equals/src/gen 
 
 all crates have example projects
 

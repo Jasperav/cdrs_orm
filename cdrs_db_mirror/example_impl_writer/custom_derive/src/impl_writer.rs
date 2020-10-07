@@ -4,9 +4,10 @@ use quote::quote;
 
 pub struct ImplWriter;
 
-const INSERT_UNIQUE: &str = "c_insert_unique";
+const INSERT: &str = "c_insert_unique";
 const SELECT_UNIQUE: &str = "c_select_unique";
 const SELECT_ALL: &str = "c_select_all";
+const SELECT_ALL_COUNT: &str = "c_select_all_count";
 const DELETE_UNIQUE: &str = "c_delete_unique";
 const UPDATE_OPTIONALS: &str = "c_update_opt";
 const UPDATE_COLUMN: &str = "c_update";
@@ -38,11 +39,14 @@ impl cdrs_query_writer::Writer for ImplWriter {
         let db_mirror_fn_name_str = db_mirror_fn_name.to_string();
         let custom_fn_name_str = custom_fn_name.to_string();
 
+        macro_rules! check {
+            ($to_check: ident) => {
+                assert_eq!(cdrs_query_writer::$to_check, db_mirror_fn_name_str);
+                assert_eq!($to_check, custom_fn_name_str);
+            };
+        };
+
         match crud {
-            CRUD::InsertUnique => {
-                assert_eq!(cdrs_query_writer::INSERT, db_mirror_fn_name_str);
-                assert_eq!(INSERT_UNIQUE, custom_fn_name_str);
-            }
             CRUD::UpdateUnique(update) => {
                 match update {
                     Update::SingleColumn((_, _)) => {
@@ -60,17 +64,20 @@ impl cdrs_query_writer::Writer for ImplWriter {
                     }
                 }
             }
+            CRUD::InsertUnique => {
+                check!(INSERT);
+            }
             CRUD::SelectUnique => {
-                assert_eq!(cdrs_query_writer::SELECT_UNIQUE, db_mirror_fn_name_str);
-                assert_eq!(SELECT_UNIQUE, custom_fn_name_str);
+                check!(SELECT_UNIQUE);
             }
             CRUD::DeleteUnique => {
-                assert_eq!(cdrs_query_writer::DELETE_UNIQUE, db_mirror_fn_name_str);
-                assert_eq!(DELETE_UNIQUE, custom_fn_name_str);
+                check!(DELETE_UNIQUE);
             }
             CRUD::SelectAll => {
-                assert_eq!(cdrs_query_writer::SELECT_ALL, db_mirror_fn_name_str);
-                assert_eq!(SELECT_ALL, custom_fn_name_str);
+                check!(SELECT_ALL);
+            }
+            CRUD::SelectAllCount => {
+                check!(SELECT_ALL_COUNT);
             }
         }
 
@@ -87,7 +94,7 @@ impl cdrs_query_writer::Writer for ImplWriter {
     }
 
     fn fn_name_insert(&self) -> &'static str {
-        INSERT_UNIQUE
+        INSERT
     }
 
     fn fn_name_select_unique(&self) -> &'static str {
@@ -108,5 +115,9 @@ impl cdrs_query_writer::Writer for ImplWriter {
 
     fn fn_name_select_all(&self) -> &'static str {
         SELECT_ALL
+    }
+
+    fn fn_name_select_all_count(&self) -> &'static str {
+        SELECT_ALL_COUNT
     }
 }

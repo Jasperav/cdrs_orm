@@ -274,6 +274,7 @@ mod test_db_mirror {
 
     #[test]
     fn test_select_queries() {
+        // Tests unique
         let another_struct = UUIDStruct {
             id: uuid::Uuid::new_v4(),
             name: "".to_string(),
@@ -284,6 +285,15 @@ mod test_db_mirror {
 
         assert_eq!("select * from UUIDStruct where id = ?", query);
         assert_eq!(query_values!(another_struct.id), qv);
+
+        // Tests SelectAll
+        assert_eq!("select * from UUIDStruct", UUIDStruct::SELECT_ALL_QUERY);
+
+        // Tests SelectAllCount
+        assert_eq!(
+            "select count(*) from UUIDStruct",
+            UUIDStruct::SELECT_ALL_COUNT_QUERY
+        );
     }
 
     #[test]
