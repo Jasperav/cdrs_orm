@@ -47,8 +47,8 @@ pub fn generate(inf: &Inf, fn_name: &Ident) -> TokenStream {
                 cdrs::query::QueryValues::NamedValues(values)
             }
 
-            pub fn #fn_name(entity: &#name) -> (&'static str, cdrs::query::QueryValues) {
-                (#name::#const_name, entity.query_values())
+            pub fn #fn_name(&self) -> (&'static str, cdrs::query::QueryValues) {
+                (#name::#const_name, self.query_values())
             }
         }
     }

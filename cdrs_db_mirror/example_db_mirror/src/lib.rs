@@ -93,7 +93,7 @@ mod test_db_mirror {
         let (query, values) = StructJsonMapping::insert_qv(&s);
         query_with_values(&session, query, values);
 
-        let (query, values) = StructJsonMapping::select_unique_qv(&s.primary_key());
+        let (query, values) = s.primary_key().select_unique_qv();
         let r: Vec<StructJsonMapping> = rows(Ok(query_with_values(&session, query, values)));
 
         assert_eq!(1, r.len());
@@ -279,9 +279,10 @@ mod test_db_mirror {
             id: uuid::Uuid::new_v4(),
             name: "".to_string(),
         };
-        let (query, qv) = UUIDStruct::select_unique_qv(&UUIDStructPrimaryKey {
+        let (query, qv) = UUIDStructPrimaryKey {
             id: another_struct.id,
-        });
+        }
+        .select_unique_qv();
 
         assert_eq!("select * from UUIDStruct where id = ?", query);
         assert_eq!(query_values!(another_struct.id), qv);

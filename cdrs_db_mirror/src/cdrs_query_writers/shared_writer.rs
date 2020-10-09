@@ -27,18 +27,19 @@ pub fn write_select_or_delete(
     test_query(&query);
 
     let pk_struct = &inf.pk_struct;
-    let ty: Type = syn::parse2(quote! {
+    let _ty: Type = syn::parse2(quote! {
         #pk_struct
     })
     .unwrap();
-    let p = &inf.pk_parameter;
+    let _p = &inf.pk_parameter;
 
     quote! {
         impl #name {
             pub const #const_name: &'static str = #query;
-
-            pub fn #fn_name(#p: &#ty) -> (&'static str, cdrs::query::QueryValues) {
-                (#name::#const_name, #p.where_clause())
+        }
+        impl #pk_struct {
+            pub fn #fn_name(&self) -> (&'static str, cdrs::query::QueryValues) {
+                (#name::#const_name, self.where_clause())
             }
         }
     }

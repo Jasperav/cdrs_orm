@@ -13,10 +13,10 @@ mod generated_some_struct {
     }
     impl SomeStruct {
         pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
-        pub fn select_unique_qv(
-            primary_key: &SomeStructPrimaryKey,
-        ) -> (&'static str, cdrs::query::QueryValues) {
-            (SomeStruct::SELECT_UNIQUE_QUERY, primary_key.where_clause())
+    }
+    impl SomeStructPrimaryKey {
+        pub fn select_unique_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
+            (SomeStruct::SELECT_UNIQUE_QUERY, self.where_clause())
         }
     }
     impl SomeStruct {
@@ -623,8 +623,8 @@ mod generated_some_struct {
             );
             cdrs::query::QueryValues::NamedValues(values)
         }
-        pub fn insert_qv(entity: &SomeStruct) -> (&'static str, cdrs::query::QueryValues) {
-            (SomeStruct::INSERT_QUERY, entity.query_values())
+        pub fn insert_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
+            (SomeStruct::INSERT_QUERY, self.query_values())
         }
     }
     pub enum SomeStructUpdateableColumns {
@@ -776,10 +776,10 @@ mod generated_some_struct {
     }
     impl SomeStruct {
         pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
-        pub fn delete_unique_qv(
-            primary_key: &SomeStructPrimaryKey,
-        ) -> (&'static str, cdrs::query::QueryValues) {
-            (SomeStruct::DELETE_UNIQUE_QUERY, primary_key.where_clause())
+    }
+    impl SomeStructPrimaryKey {
+        pub fn delete_unique_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
+            (SomeStruct::DELETE_UNIQUE_QUERY, self.where_clause())
         }
     }
 }
