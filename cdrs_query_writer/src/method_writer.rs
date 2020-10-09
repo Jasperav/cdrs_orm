@@ -60,6 +60,12 @@ pub struct Inf<'a> {
     pub materialized_view: Option<MaterializedViewInf>,
 }
 
+pub struct BaseTableTokenstream {
+    pub update: TokenStream,
+    pub delete: TokenStream,
+    pub insert: TokenStream,
+}
+
 pub trait Writer {
     fn write_pk(&self, inf: &Inf) -> TokenStream;
     fn write(
@@ -69,6 +75,23 @@ pub trait Writer {
         custom_fn_name: &Ident,
         crud: CRUD,
     ) -> TokenStream;
+
+    fn post_process_ts(
+        &self,
+        mut select_queries: TokenStream,
+        pk: TokenStream,
+        base_table_tokenstream: Option<BaseTableTokenstream>,
+    ) -> TokenStream {
+        select_queries.extend(pk);
+
+        if let Some(btt) = base_table_tokenstream {
+            select_queries.extend(btt.insert);
+            select_queries.extend(btt.update);
+            select_queries.extend(btt.delete);
+        }
+
+        select_queries
+    }
 
     // Override the 'fn_name...' methods to a custom fn name
     fn fn_name_insert(&self) -> &'static str {
@@ -137,18 +160,32 @@ pub fn write(derive: DeriveInput, writer: impl Writer) -> TokenStream {
         materialized_view: mv,
     };
 
-    let mut queries = TokenStream::new();
-
-    queries.extend(writer.write_pk(&inf));
+    let pk_ts = writer.write_pk(&inf);
 
     let is_materialized_view = inf.materialized_view.is_some();
+
+    let mut base_ts = BaseTableTokenstream {
+        update: Default::default(),
+        delete: Default::default(),
+        insert: Default::default(),
+    };
+
     if !is_materialized_view {
-        queries.extend(crate::crud::insert::generate(&inf, &writer));
-        queries.extend(crate::crud::delete::generate(&inf, &writer));
+        // Materialized views rows can not be inserted, deleted or updated
+        base_ts.insert = crate::crud::insert::generate(&inf, &writer);
+        base_ts.delete = crate::crud::delete::generate(&inf, &writer);
+        base_ts.update = crate::crud::update::generate(&inf, &writer);
     }
 
-    queries.extend(crate::crud::update::generate(&inf, &writer));
-    queries.extend(crate::crud::select::generate(&inf, &writer));
+    let select_ts = crate::crud::select::generate(&inf, &writer);
 
-    queries
+    writer.post_process_ts(
+        select_ts,
+        pk_ts,
+        if is_materialized_view {
+            None
+        } else {
+            Some(base_ts)
+        },
+    )
 }

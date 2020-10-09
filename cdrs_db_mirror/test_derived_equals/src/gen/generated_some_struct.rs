@@ -11,6 +11,32 @@ mod generated_some_struct {
         another_cluster_key: i32,
         name: String,
     }
+    impl SomeStruct {
+        pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
+        pub fn select_unique_qv(
+            primary_key: &SomeStructPrimaryKey,
+        ) -> (&'static str, cdrs::query::QueryValues) {
+            (SomeStruct::SELECT_UNIQUE_QUERY, primary_key.where_clause())
+        }
+    }
+    impl SomeStruct {
+        pub const SELECT_ALL_QUERY: &'static str = "select * from SomeStruct";
+        pub fn select_all_q() -> (&'static str, cdrs::query::QueryValues) {
+            (
+                SomeStruct::SELECT_ALL_QUERY,
+                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
+            )
+        }
+    }
+    impl SomeStruct {
+        pub const SELECT_ALL_COUNT_QUERY: &'static str = "select count(*) from SomeStruct";
+        pub fn select_all_count_q() -> (&'static str, cdrs::query::QueryValues) {
+            (
+                SomeStruct::SELECT_ALL_COUNT_QUERY,
+                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
+            )
+        }
+    }
     pub struct SomeStructPrimaryKey {
         pub id: i32,
         pub another_id: i32,
@@ -601,14 +627,6 @@ mod generated_some_struct {
             (SomeStruct::INSERT_QUERY, entity.query_values())
         }
     }
-    impl SomeStruct {
-        pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
-        pub fn delete_unique_qv(
-            primary_key: &SomeStructPrimaryKey,
-        ) -> (&'static str, cdrs::query::QueryValues) {
-            (SomeStruct::DELETE_UNIQUE_QUERY, primary_key.where_clause())
-        }
-    }
     pub enum SomeStructUpdateableColumns {
         Name(String),
     }
@@ -757,29 +775,11 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
-        pub fn select_unique_qv(
+        pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
+        pub fn delete_unique_qv(
             primary_key: &SomeStructPrimaryKey,
         ) -> (&'static str, cdrs::query::QueryValues) {
-            (SomeStruct::SELECT_UNIQUE_QUERY, primary_key.where_clause())
-        }
-    }
-    impl SomeStruct {
-        pub const SELECT_ALL_QUERY: &'static str = "select * from SomeStruct";
-        pub fn select_all_q() -> (&'static str, cdrs::query::QueryValues) {
-            (
-                SomeStruct::SELECT_ALL_QUERY,
-                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
-            )
-        }
-    }
-    impl SomeStruct {
-        pub const SELECT_ALL_COUNT_QUERY: &'static str = "select count(*) from SomeStruct";
-        pub fn select_all_count_q() -> (&'static str, cdrs::query::QueryValues) {
-            (
-                SomeStruct::SELECT_ALL_COUNT_QUERY,
-                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
-            )
+            (SomeStruct::DELETE_UNIQUE_QUERY, primary_key.where_clause())
         }
     }
 }

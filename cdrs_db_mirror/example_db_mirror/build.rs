@@ -6,7 +6,7 @@ fn main() {
     recreate_keyspace(&session, TEST_CDRS_DB_KEYSPACE);
     query(
         &session,
-        "create table  AnotherStruct
+        "create table AnotherStruct
 (
     id   int,
     name text,
@@ -15,7 +15,7 @@ fn main() {
     );
     query(
         &session,
-        "create table  UUIDStruct
+        "create table UUIDStruct
 (
     id   uuid,
     name text,
@@ -24,7 +24,7 @@ fn main() {
     );
     query(
         &session,
-        "create table  SomeStruct
+        "create table SomeStruct
 (
     id   int,
     another_id   int,
@@ -36,7 +36,7 @@ fn main() {
     );
     query(
         &session,
-        "create table  FooStruct
+        "create table FooStruct
 (
     id   int,
     cluster_key   int,
@@ -47,7 +47,7 @@ fn main() {
     );
     query(
         &session,
-        "create table  StructJsonMapping
+        "create table StructJsonMapping
 (
     a   text,
     b   text,
