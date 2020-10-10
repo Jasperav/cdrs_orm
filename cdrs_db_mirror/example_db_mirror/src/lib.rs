@@ -146,12 +146,10 @@ mod test_db_mirror {
             nickname: "nickname".to_string(),
         };
 
-        let (query, values) = FooStruct::update_qv(
-            &foo_struct.primary_key(),
-            Some(foo_struct.name.clone()),
-            None,
-        )
-        .unwrap();
+        let (query, values) = foo_struct
+            .primary_key()
+            .update_qv(Some(foo_struct.name.clone()), None)
+            .unwrap();
 
         assert_eq!(
             "update FooStruct set name = ? where id = ? and cluster_key = ?",
@@ -166,12 +164,13 @@ mod test_db_mirror {
             values
         );
 
-        let (query, values) = FooStruct::update_qv(
-            &foo_struct.primary_key(),
-            Some(foo_struct.name.clone()),
-            Some(foo_struct.nickname.clone()),
-        )
-        .unwrap();
+        let (query, values) = foo_struct
+            .primary_key()
+            .update_qv(
+                Some(foo_struct.name.clone()),
+                Some(foo_struct.nickname.clone()),
+            )
+            .unwrap();
 
         assert_eq!(
             "update FooStruct set name = ?, nickname = ? where id = ? and cluster_key = ?",
@@ -187,13 +186,11 @@ mod test_db_mirror {
             values
         );
 
-        assert_eq!(
-            None,
-            FooStruct::update_qv(&foo_struct.primary_key(), None, None)
-        );
+        assert_eq!(None, foo_struct.primary_key().update_qv(None, None));
 
-        let (query, values) =
-            FooStruct::update_qv_name(&foo_struct.primary_key(), foo_struct.name.clone());
+        let (query, values) = foo_struct
+            .primary_key()
+            .update_qv_name(foo_struct.name.clone());
 
         assert_eq!(
             "update FooStruct set name = ? where id = ? and cluster_key = ?",
@@ -212,10 +209,12 @@ mod test_db_mirror {
             FooStruct::UPDATE_NAME_QUERY
         );
 
-        let (query, values) = FooStruct::update_multiple_qv(
-            &foo_struct.primary_key(),
-            vec![FooStructUpdateableColumns::Name(foo_struct.name.clone())],
-        );
+        let (query, values) =
+            foo_struct
+                .primary_key()
+                .update_multiple_qv(vec![FooStructUpdateableColumns::Name(
+                    foo_struct.name.clone(),
+                )]);
 
         assert_eq!(
             "update FooStruct set name = ? where id = ? and cluster_key = ?",
@@ -230,13 +229,10 @@ mod test_db_mirror {
             values
         );
 
-        let (query, values) = FooStruct::update_multiple_qv(
-            &foo_struct.primary_key(),
-            vec![
-                FooStructUpdateableColumns::Name(foo_struct.name.clone()),
-                FooStructUpdateableColumns::Nickname(foo_struct.nickname.clone()),
-            ],
-        );
+        let (query, values) = foo_struct.primary_key().update_multiple_qv(vec![
+            FooStructUpdateableColumns::Name(foo_struct.name.clone()),
+            FooStructUpdateableColumns::Nickname(foo_struct.nickname.clone()),
+        ]);
 
         assert_eq!(
             "update FooStruct set name = ?, nickname = ? where id = ? and cluster_key = ?",
@@ -264,9 +260,8 @@ mod test_db_mirror {
         let pk = f.primary_key();
         let s = "test".to_string();
 
-        let (query_0, values_0) =
-            FooStruct::update_dyn_qv(&pk, FooStructUpdateableColumns::Name(s.clone()));
-        let (query_1, values_1) = FooStruct::update_qv_name(&pk, s);
+        let (query_0, values_0) = pk.update_dyn_qv(FooStructUpdateableColumns::Name(s.clone()));
+        let (query_1, values_1) = pk.update_qv_name(s);
 
         assert_eq!(query_0, query_1);
         assert_eq!(values_0, values_1);

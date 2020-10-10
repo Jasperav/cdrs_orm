@@ -15,7 +15,7 @@ members = [
     "cdrs_ci",
     "internal_ci",
     # Make sure this is the last project
-    # This crate uses cargo expand and that takes a long time to install.
+    # This crate uses cargo expand and that takes a long time to install in github actions.
     # To see quick test results from the other crates, make sure cargo expand installation is deplayed as long as possible.
     "cdrs_db_mirror/test_derived_equals",
 ]

@@ -79,6 +79,10 @@ pub fn generate(inf: &Inf) -> TokenStream {
             pub const #where_clause_pk: &'static str = #where_clause_query;
 
             pub fn where_clause(&self) -> cdrs::query::QueryValues {
+                cdrs::query::QueryValues::SimpleValues(self.where_clause_raw())
+            }
+
+            pub fn where_clause_raw(&self) -> Vec<cdrs::types::value::Value> {
                 use std::iter::FromIterator;
 
                 let mut query_values: Vec<cdrs::types::value::Value> = Vec::new();
@@ -87,7 +91,7 @@ pub fn generate(inf: &Inf) -> TokenStream {
                     query_values.push(cdrs::types::value::Value::new_normal(self.#idents.clone()));
                 )*
 
-                cdrs::query::QueryValues::SimpleValues(query_values)
+                query_values
             }
         }
     }

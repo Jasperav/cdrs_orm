@@ -5,7 +5,7 @@ use quote::{format_ident, quote};
 /// Generates several update statements for the Rust struct
 pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStream {
     let pk_struct = &inf.pk_struct;
-    let pk_parameter = &inf.pk_parameter;
+    let _pk_parameter = &inf.pk_parameter;
     let db_name = inf.table_name;
     let name = inf.name;
 
@@ -27,20 +27,13 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             quote! {
                 impl #name {
                     pub const #const_name: &'static str = concat!(#query, #where_clause_query);
+                }
 
-                    pub fn #fn_name(#pk_parameter: &#pk_struct, #ident: #ty) -> (&'static str, cdrs::query::QueryValues) {
-                        let mut values = primary_key.where_clause();
+                impl #pk_struct {
+                    pub fn #fn_name(&self, #ident: #ty) -> (&'static str, cdrs::query::QueryValues) {
+                        let mut values = self.where_clause_raw();
 
-                        let value = cdrs::types::value::Value::new_normal(#ident);
-
-                        let mut values = match values {
-                            cdrs::query::QueryValues::SimpleValues(mut v) => {
-                                v.insert(0, value);
-
-                                v
-                            },
-                            _ => panic!()
-                        };
+                        values.insert(0, cdrs::types::value::Value::new_normal(#ident));
 
                         (#name::#const_name, cdrs::query::QueryValues::SimpleValues(values))
                     }
@@ -52,8 +45,8 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             let pk = primary_key();
 
             quote! {
-                impl #name {
-                    pub fn #fn_name(#pk_parameter: &#pk_struct, #(#idents: #types),*) -> std::option::Option<(String, cdrs::query::QueryValues)> {
+                impl #pk_struct {
+                    pub fn #fn_name(&self, #(#idents: #types),*) -> std::option::Option<(String, cdrs::query::QueryValues)> {
                         let mut to_update: Vec<String> = std::vec::Vec::new();
                         let mut qv: Vec<cdrs::types::value::Value> = std::vec::Vec::new();
 
@@ -70,14 +63,9 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
                         let to_update: String = to_update.join(", ");
                         let to_update = format!("set {}", to_update);
-                        let values = primary_key.where_clause();
+                        let values = self.where_clause_raw();
 
-                        match values {
-                            cdrs::query::QueryValues::SimpleValues(mut v) => {
-                                qv.append(&mut v);
-                            },
-                            _ => panic!()
-                        };
+                        qv.extend(values);
 
                         let string = format!("update {} {}{}", #db_name, to_update, #pk_struct::#pk);
 
@@ -93,8 +81,6 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             let enum_cases = dynamic_update.enum_cases;
             let tys = dynamic_update.updateable_columns_types;
 
-            // Still generate the enum cases even if there are no cases or it materialized view
-            // because code generation will be easier
             let mut e = if inf.materialized_view.is_none() {
                 quote! {
                     pub enum #enum_ident {
@@ -102,17 +88,15 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
                     }
                 }
             } else {
-                quote! {
-                    pub enum #enum_ident {}
-                }
+                quote! {}
             };
 
             if !enum_cases.is_empty() && inf.materialized_view.is_none() {
                 e.extend(quote! {
-                    impl #name {
-                        pub fn #fn_name(#pk_parameter: &#pk_struct, #enum_pk_param: #enum_ident) -> (&'static str, cdrs::query::QueryValues) {
+                    impl #pk_struct {
+                        pub fn #fn_name(&self, #enum_pk_param: #enum_ident) -> (&'static str, cdrs::query::QueryValues) {
                             match #enum_pk_param {
-                                #(#enum_ident::#enum_cases(val) => #name::#enum_method_names(#pk_parameter, val)),*
+                                #(#enum_ident::#enum_cases(val) => self.#enum_method_names(val)),*
                             }
                         }
                     }
@@ -132,8 +116,8 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             }
 
             quote! {
-                impl #name {
-                    pub fn #fn_name(#pk_parameter: &#pk_struct, vec: std::vec::Vec<#enum_ident>) -> (String, cdrs::query::QueryValues) {
+                impl #pk_struct {
+                    pub fn #fn_name(&self, vec: std::vec::Vec<#enum_ident>) -> (String, cdrs::query::QueryValues) {
                         assert!(!vec.is_empty());
                         let mut query = vec![];
                         let mut values: std::vec::Vec<cdrs::types::value::Value> = vec![];
@@ -149,12 +133,8 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
                         let columns_to_update: String = query.join(", ");
                         let update_statement = format!("update {} set {}{}", stringify!(#name), columns_to_update, #pk_struct::#pk);
-                        match primary_key.where_clause() {
-                            cdrs::query::QueryValues::SimpleValues(v) => values.extend(v),
-                            _ => panic!()
-                        };
 
-
+                        values.extend(self.where_clause_raw());
 
                         let query_values = cdrs::query::QueryValues::SimpleValues(values);
 

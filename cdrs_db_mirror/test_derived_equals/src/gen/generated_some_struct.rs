@@ -581,6 +581,9 @@ mod generated_some_struct {
         pub const WHERE_CLAUSE_PK: &'static str =
             " where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?";
         pub fn where_clause(&self) -> cdrs::query::QueryValues {
+            cdrs::query::QueryValues::SimpleValues(self.where_clause_raw())
+        }
+        pub fn where_clause_raw(&self) -> Vec<cdrs::types::value::Value> {
             use std::iter::FromIterator;
             let mut query_values: Vec<cdrs::types::value::Value> = Vec::new();
             query_values.push(cdrs::types::value::Value::new_normal(self.id.clone()));
@@ -593,7 +596,7 @@ mod generated_some_struct {
             query_values.push(cdrs::types::value::Value::new_normal(
                 self.another_cluster_key.clone(),
             ));
-            cdrs::query::QueryValues::SimpleValues(query_values)
+            query_values
         }
     }
     impl SomeStruct {
@@ -630,21 +633,19 @@ mod generated_some_struct {
     pub enum SomeStructUpdateableColumns {
         Name(String),
     }
-    impl SomeStruct {
+    impl SomeStructPrimaryKey {
         pub fn update_dyn_qv(
-            primary_key: &SomeStructPrimaryKey,
+            &self,
             dyn_column: SomeStructUpdateableColumns,
         ) -> (&'static str, cdrs::query::QueryValues) {
             match dyn_column {
-                SomeStructUpdateableColumns::Name(val) => {
-                    SomeStruct::update_qv_name(primary_key, val)
-                }
+                SomeStructUpdateableColumns::Name(val) => self.update_qv_name(val),
             }
         }
     }
-    impl SomeStruct {
+    impl SomeStructPrimaryKey {
         pub fn update_qv(
-            primary_key: &SomeStructPrimaryKey,
+            &self,
             name: std::option::Option<String>,
         ) -> std::option::Option<(String, cdrs::query::QueryValues)> {
             let mut to_update: Vec<String> = std::vec::Vec::new();
@@ -680,13 +681,8 @@ mod generated_some_struct {
                 ));
                 res
             };
-            let values = primary_key.where_clause();
-            match values {
-                cdrs::query::QueryValues::SimpleValues(mut v) => {
-                    qv.append(&mut v);
-                }
-                _ => ::std::rt::begin_panic("explicit panic"),
-            };
+            let values = self.where_clause_raw();
+            qv.extend(values);
             let string = {
                 let res = ::alloc::fmt::format(::core::fmt::Arguments::new_v1(
                     &["update ", " ", ""],
@@ -707,9 +703,9 @@ mod generated_some_struct {
             Some((string, cdrs::query::QueryValues::SimpleValues(qv)))
         }
     }
-    impl SomeStruct {
+    impl SomeStructPrimaryKey {
         pub fn update_multiple_qv(
-            primary_key: &SomeStructPrimaryKey,
+            &self,
             vec: std::vec::Vec<SomeStructUpdateableColumns>,
         ) -> (String, cdrs::query::QueryValues) {
             if !!vec.is_empty() {
@@ -745,29 +741,18 @@ mod generated_some_struct {
                 ));
                 res
             };
-            match primary_key.where_clause() {
-                cdrs::query::QueryValues::SimpleValues(v) => values.extend(v),
-                _ => ::std::rt::begin_panic("explicit panic"),
-            };
+            values.extend(self.where_clause_raw());
             let query_values = cdrs::query::QueryValues::SimpleValues(values);
             (update_statement, query_values)
         }
     }
     impl SomeStruct {
         pub const UPDATE_NAME_QUERY : & 'static str = "update SomeStruct set name = ? where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
-        pub fn update_qv_name(
-            primary_key: &SomeStructPrimaryKey,
-            name: String,
-        ) -> (&'static str, cdrs::query::QueryValues) {
-            let mut values = primary_key.where_clause();
-            let value = cdrs::types::value::Value::new_normal(name);
-            let mut values = match values {
-                cdrs::query::QueryValues::SimpleValues(mut v) => {
-                    v.insert(0, value);
-                    v
-                }
-                _ => ::std::rt::begin_panic("explicit panic"),
-            };
+    }
+    impl SomeStructPrimaryKey {
+        pub fn update_qv_name(&self, name: String) -> (&'static str, cdrs::query::QueryValues) {
+            let mut values = self.where_clause_raw();
+            values.insert(0, cdrs::types::value::Value::new_normal(name));
             (
                 SomeStruct::UPDATE_NAME_QUERY,
                 cdrs::query::QueryValues::SimpleValues(values),
