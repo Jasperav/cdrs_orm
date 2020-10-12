@@ -1,5 +1,5 @@
 use crate::{
-    pk_parameter, pk_struct, read_attributes, updateable_columns_enum, COLUMN_SEPARATOR,
+    pk_parameter, pk_struct, read_attributes, updatable_columns_enum, COLUMN_SEPARATOR,
     DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, UPDATE_MULTIPLE_COLUMNS,
     UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
@@ -21,8 +21,8 @@ pub enum CRUD<'a> {
 }
 
 pub struct DynamicUpdate<'a> {
-    pub updateable_columns: &'a Vec<Ident>,
-    pub updateable_columns_types: &'a Vec<Type>,
+    pub updatable_columns: &'a Vec<Ident>,
+    pub updatable_columns_types: &'a Vec<Type>,
     pub enum_cases: &'a Vec<Ident>,
     pub enum_method_names: &'a Vec<Ident>,
 }
@@ -54,8 +54,8 @@ pub struct Inf<'a> {
     pub pk_struct: Ident,
     pub pk_parameter: Ident,
     pub fields: Vec<Field>,
-    pub updateable_columns_enum: Ident,
-    pub updateable_columns_enum_parameter: Ident,
+    pub updatable_columns_enum: Ident,
+    pub updatable_columns_enum_parameter: Ident,
     // If filled this current table is a materialized view and it's filled with the base table name and struct name
     pub materialized_view: Option<MaterializedViewInf>,
 }
@@ -137,7 +137,7 @@ pub fn write(derive: DeriveInput, writer: impl Writer) -> TokenStream {
     let non_pk_fields = fields.iter().filter(|f| !pk_fields.contains(f)).collect();
     let pk_struct = pk_struct(&name);
     let session = create_test_db_session();
-    let updateable_columns_enum = updateable_columns_enum(&name.to_string());
+    let updatable_columns_enum = updatable_columns_enum(&name.to_string());
     let mv = query_materialized_view(&session, &table_name);
     let inf = Inf {
         name,
@@ -155,8 +155,8 @@ pub fn write(derive: DeriveInput, writer: impl Writer) -> TokenStream {
         pk_struct,
         pk_parameter: pk_parameter(),
         fields: fields.clone(),
-        updateable_columns_enum,
-        updateable_columns_enum_parameter: format_ident!("dyn_column"),
+        updatable_columns_enum,
+        updatable_columns_enum_parameter: format_ident!("dyn_column"),
         materialized_view: mv,
     };
 

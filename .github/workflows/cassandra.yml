@@ -315,12 +315,3 @@ jobs:
         run: cargo +nightly fix --package test_derived_equals --all-features --allow-dirty --allow-staged --jobs=1
       - name: test test_derived_equals
         run: cargo +nightly test --package test_derived_equals --verbose -- --test-threads=1
-      - name: clippy test_derived_equals
-        run: cargo +nightly clippy --package test_derived_equals --fix -Z unstable-options --allow-dirty --allow-staged
-      - name: clean test_derived_equals
-        run: cargo +nightly clean --package test_derived_equals
-      - name: build test_derived_equals
-        run: cargo +nightly build --package test_derived_equals --jobs=1
-      - name: clippy test_derived_equals
-        run: cargo +nightly clippy --package test_derived_equals -- -D warnings
-

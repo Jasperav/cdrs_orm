@@ -95,8 +95,8 @@ pub fn where_pk_query_from_idents(idents: &[Ident]) -> String {
     " where ".to_string() + &idents.join(" and ")
 }
 
-pub fn updateable_columns_enum(struct_name: &str) -> Ident {
-    format_ident!("{}UpdateableColumns", struct_name)
+pub fn updatable_columns_enum(struct_name: &str) -> Ident {
+    format_ident!("{}UpdatableColumns", struct_name)
 }
 
 #[cfg(test)]

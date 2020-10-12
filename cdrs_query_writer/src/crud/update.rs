@@ -35,16 +35,14 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
         .map(|i| format_ident!("{}", i))
         .collect();
 
-    // Even if the entity does not have updateable columns, still create the enum
-    // Also do it for materialized views, although they can not be updated, it's easier for code generation
     tokens.extend(
         writer.write(
             inf,
             &format_ident!("{}", UPDATE_SINGLE_COLUMN_DYNAMIC),
             &format_ident!("{}", writer.fn_name_update_column_dynamic()),
             CRUD::UpdateUnique(Update::Dynamic(DynamicUpdate {
-                updateable_columns: &idents,
-                updateable_columns_types: &ty,
+                updatable_columns: &idents,
+                updatable_columns_types: &ty,
                 enum_cases: &enum_cases,
                 enum_method_names: &idents
                     .iter()

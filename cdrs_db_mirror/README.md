@@ -17,7 +17,7 @@ variable: `DERIVE_CDRS_PK`.
     - insert
     - update:
         - single property (all properties have a update method)
-        - by enum: for every property that can be updated, a variant is added to the `<my_struct>UpdateableColumns` enum.
+        - by enum: for every property that can be updated, a variant is added to the `<my_struct>UpdatableColumns` enum.
             - dynamic by enum. This is a single method that takes a the updatable enum and updates the corresponding property.
             - dynamic by vec enum. Single method that takes a vec of the updatable enums and dynamically creates the update statement. 
         Note: this returns a `String` unlike the other statements that returns `&'static str`

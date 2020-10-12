@@ -70,7 +70,7 @@ struct SomeStruct {
 mod test_db_mirror {
     use crate::some_serialized_struct::SomeSerializedStruct;
     use crate::{
-        FooStruct, FooStructUpdateableColumns, SomeStruct, SomeStructPrimaryKey, StructJsonMapping,
+        FooStruct, FooStructUpdatableColumns, SomeStruct, SomeStructPrimaryKey, StructJsonMapping,
         UUIDStruct, UUIDStructPrimaryKey,
     };
     use cdrs::query::QueryValues;
@@ -212,7 +212,7 @@ mod test_db_mirror {
         let (query, values) =
             foo_struct
                 .primary_key()
-                .update_multiple_qv(vec![FooStructUpdateableColumns::Name(
+                .update_multiple_qv(vec![FooStructUpdatableColumns::Name(
                     foo_struct.name.clone(),
                 )]);
 
@@ -230,8 +230,8 @@ mod test_db_mirror {
         );
 
         let (query, values) = foo_struct.primary_key().update_multiple_qv(vec![
-            FooStructUpdateableColumns::Name(foo_struct.name.clone()),
-            FooStructUpdateableColumns::Nickname(foo_struct.nickname.clone()),
+            FooStructUpdatableColumns::Name(foo_struct.name.clone()),
+            FooStructUpdatableColumns::Nickname(foo_struct.nickname.clone()),
         ]);
 
         assert_eq!(
@@ -260,7 +260,7 @@ mod test_db_mirror {
         let pk = f.primary_key();
         let s = "test".to_string();
 
-        let (query_0, values_0) = pk.update_dyn_qv(FooStructUpdateableColumns::Name(s.clone()));
+        let (query_0, values_0) = pk.update_dyn_qv(FooStructUpdatableColumns::Name(s.clone()));
         let (query_1, values_1) = pk.update_qv_name(s);
 
         assert_eq!(query_0, query_1);

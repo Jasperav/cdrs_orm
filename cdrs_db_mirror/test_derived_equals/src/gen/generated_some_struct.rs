@@ -630,16 +630,28 @@ mod generated_some_struct {
             (SomeStruct::INSERT_QUERY, self.query_values())
         }
     }
-    pub enum SomeStructUpdateableColumns {
+    pub enum SomeStructUpdatableColumns {
         Name(String),
+    }
+    #[automatically_derived]
+    #[allow(unused_qualifications)]
+    impl ::core::clone::Clone for SomeStructUpdatableColumns {
+        #[inline]
+        fn clone(&self) -> SomeStructUpdatableColumns {
+            match (&*self,) {
+                (&SomeStructUpdatableColumns::Name(ref __self_0),) => {
+                    SomeStructUpdatableColumns::Name(::core::clone::Clone::clone(&(*__self_0)))
+                }
+            }
+        }
     }
     impl SomeStructPrimaryKey {
         pub fn update_dyn_qv(
             &self,
-            dyn_column: SomeStructUpdateableColumns,
+            dyn_column: SomeStructUpdatableColumns,
         ) -> (&'static str, cdrs::query::QueryValues) {
             match dyn_column {
-                SomeStructUpdateableColumns::Name(val) => self.update_qv_name(val),
+                SomeStructUpdatableColumns::Name(val) => self.update_qv_name(val),
             }
         }
     }
@@ -706,7 +718,7 @@ mod generated_some_struct {
     impl SomeStructPrimaryKey {
         pub fn update_multiple_qv(
             &self,
-            vec: std::vec::Vec<SomeStructUpdateableColumns>,
+            vec: std::vec::Vec<SomeStructUpdatableColumns>,
         ) -> (String, cdrs::query::QueryValues) {
             if !!vec.is_empty() {
                 {
@@ -717,7 +729,7 @@ mod generated_some_struct {
             let mut values: std::vec::Vec<cdrs::types::value::Value> = ::alloc::vec::Vec::new();
             for ident in vec {
                 match ident {
-                    SomeStructUpdateableColumns::Name(val) => {
+                    SomeStructUpdatableColumns::Name(val) => {
                         query.push("name = ?");
                         values.push(val.into());
                     }

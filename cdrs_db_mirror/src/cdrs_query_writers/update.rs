@@ -75,11 +75,11 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             }
         }
         Update::Dynamic(dynamic_update) => {
-            let enum_ident = &inf.updateable_columns_enum;
-            let enum_pk_param = &inf.updateable_columns_enum_parameter;
+            let enum_ident = &inf.updatable_columns_enum;
+            let enum_pk_param = &inf.updatable_columns_enum_parameter;
             let enum_method_names = dynamic_update.enum_method_names;
             let enum_cases = dynamic_update.enum_cases;
-            let tys = dynamic_update.updateable_columns_types;
+            let tys = dynamic_update.updatable_columns_types;
 
             let mut e = if inf.materialized_view.is_none() {
                 quote! {
@@ -109,7 +109,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
         Update::DynamicVec(dynamic_multiple_updates) => {
             let enum_column_names = dynamic_multiple_updates.enum_column_names;
             let enum_cases = dynamic_multiple_updates.enum_cases;
-            let enum_ident = &inf.updateable_columns_enum;
+            let enum_ident = &inf.updatable_columns_enum;
             let pk = primary_key();
 
             if enum_cases.is_empty() || inf.materialized_view.is_some() {
