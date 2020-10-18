@@ -779,4 +779,13 @@ mod generated_some_struct {
             (SomeStruct::DELETE_UNIQUE_QUERY, self.where_clause())
         }
     }
+    impl SomeStruct {
+        pub const TRUNCATE_QUERY: &'static str = "truncate SomeStruct";
+        pub fn truncate_q(&self) -> (&'static str, cdrs::query::QueryValues) {
+            (
+                SomeStruct::TRUNCATE_QUERY,
+                cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),
+            )
+        }
+    }
 }

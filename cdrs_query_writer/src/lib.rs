@@ -15,6 +15,7 @@ pub const DELETE_UNIQUE: &str = "delete_unique_qv";
 pub const SELECT_UNIQUE: &str = "select_unique_qv";
 pub const SELECT_ALL: &str = "select_all_q";
 pub const SELECT_ALL_COUNT: &str = "select_all_count_q";
+pub const TRUNCATE: &str = "truncate_q";
 
 /// Note: updates are always executed for a single row
 pub const UPDATE_OPTIONALS: &str = "update_qv";

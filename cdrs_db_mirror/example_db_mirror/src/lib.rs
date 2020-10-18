@@ -250,6 +250,13 @@ mod test_db_mirror {
     }
 
     #[test]
+    fn test_truncate() {
+        let query = FooStruct::TRUNCATE_QUERY;
+
+        assert_eq!("truncate FooStruct", query);
+    }
+
+    #[test]
     fn test_dyn_update() {
         let f = FooStruct {
             id: 0,

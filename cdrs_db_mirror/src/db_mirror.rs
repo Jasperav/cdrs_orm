@@ -57,6 +57,7 @@ impl Writer for ImplWriter {
                 "count(*)",
                 "SELECT_ALL_COUNT_QUERY",
             ),
+            CRUD::Truncate => crate::cdrs_query_writers::truncate::generate(inf, db_mirror_fn_name),
         }
     }
 }

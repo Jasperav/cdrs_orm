@@ -11,6 +11,7 @@ const SELECT_ALL_COUNT: &str = "c_select_all_count";
 const DELETE_UNIQUE: &str = "c_delete_unique";
 const UPDATE_OPTIONALS: &str = "c_update_opt";
 const UPDATE_COLUMN: &str = "c_update";
+const TRUNCATE: &str = "c_truncate";
 
 impl cdrs_query_writer::Writer for ImplWriter {
     fn write_pk(&self, inf: &Inf) -> TokenStream {
@@ -79,6 +80,9 @@ impl cdrs_query_writer::Writer for ImplWriter {
             CRUD::SelectAllCount => {
                 check!(SELECT_ALL_COUNT);
             }
+            CRUD::Truncate => {
+                check!(TRUNCATE);
+            }
         }
 
         let name = inf.name;
@@ -119,5 +123,9 @@ impl cdrs_query_writer::Writer for ImplWriter {
 
     fn fn_name_select_all_count(&self) -> &'static str {
         SELECT_ALL_COUNT
+    }
+
+    fn fn_name_truncate(&self) -> &'static str {
+        TRUNCATE
     }
 }

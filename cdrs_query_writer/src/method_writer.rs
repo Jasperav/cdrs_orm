@@ -1,7 +1,7 @@
 use crate::{
     pk_parameter, pk_struct, read_attributes, updatable_columns_enum, COLUMN_SEPARATOR,
-    DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, UPDATE_MULTIPLE_COLUMNS,
-    UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
+    DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, TRUNCATE,
+    UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
 use cdrs_con::capitalizing::struct_name_to_db_table_name;
 use cdrs_con::create_test_db_session;
@@ -18,6 +18,7 @@ pub enum CRUD<'a> {
     SelectAll,
     SelectAllCount,
     DeleteUnique,
+    Truncate,
 }
 
 pub struct DynamicUpdate<'a> {
@@ -60,10 +61,12 @@ pub struct Inf<'a> {
     pub materialized_view: Option<MaterializedViewInf>,
 }
 
+#[derive(Default)]
 pub struct BaseTableTokenstream {
     pub update: TokenStream,
     pub delete: TokenStream,
     pub insert: TokenStream,
+    pub truncate: TokenStream,
 }
 
 pub trait Writer {
@@ -88,6 +91,7 @@ pub trait Writer {
             select_queries.extend(btt.insert);
             select_queries.extend(btt.update);
             select_queries.extend(btt.delete);
+            select_queries.extend(btt.truncate);
         }
 
         select_queries
@@ -108,6 +112,9 @@ pub trait Writer {
     }
     fn fn_name_delete_unique(&self) -> &'static str {
         DELETE_UNIQUE
+    }
+    fn fn_name_truncate(&self) -> &'static str {
+        TRUNCATE
     }
     fn fn_name_update_optionals(&self) -> &'static str {
         UPDATE_OPTIONALS
@@ -164,17 +171,14 @@ pub fn write(derive: DeriveInput, writer: impl Writer) -> TokenStream {
 
     let is_materialized_view = inf.materialized_view.is_some();
 
-    let mut base_ts = BaseTableTokenstream {
-        update: Default::default(),
-        delete: Default::default(),
-        insert: Default::default(),
-    };
+    let mut base_ts = BaseTableTokenstream::default();
 
     if !is_materialized_view {
-        // Materialized views rows can not be inserted, deleted or updated
+        // Materialized views rows can not be inserted, deleted, updated or truncated
         base_ts.insert = crate::crud::insert::generate(&inf, &writer);
         base_ts.delete = crate::crud::delete::generate(&inf, &writer);
         base_ts.update = crate::crud::update::generate(&inf, &writer);
+        base_ts.truncate = crate::crud::truncate::generate(&inf, &writer);
     }
 
     let select_ts = crate::crud::select::generate(&inf, &writer);
