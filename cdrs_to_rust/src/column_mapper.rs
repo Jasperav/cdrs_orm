@@ -29,7 +29,13 @@ pub(crate) fn column_to_property(
                 },
             };
 
+            let attrs = transformer.attributes(table_name, &c.column_name);
+            att.extend(quote! {
+                #attrs
+            });
+
             let ty = if let Some(mapping) = transformer.json_mapping(table_name, &c.column_name) {
+                // Only text columns can be mapped to json
                 assert_eq!("text", &c.data_type);
 
                 if !mapping.import.is_empty() {
@@ -41,10 +47,7 @@ pub(crate) fn column_to_property(
                     }
                 }
 
-                let attrs = mapping.attributes;
-
                 att.extend(quote! {
-                    #attrs
                     #[json_mapped]
                 });
 

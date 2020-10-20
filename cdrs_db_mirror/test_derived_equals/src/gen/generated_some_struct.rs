@@ -781,7 +781,7 @@ mod generated_some_struct {
     }
     impl SomeStruct {
         pub const TRUNCATE_QUERY: &'static str = "truncate SomeStruct";
-        pub fn truncate_q(&self) -> (&'static str, cdrs::query::QueryValues) {
+        pub fn truncate_q() -> (&'static str, cdrs::query::QueryValues) {
             (
                 SomeStruct::TRUNCATE_QUERY,
                 cdrs::query::QueryValues::SimpleValues(::alloc::vec::Vec::new()),

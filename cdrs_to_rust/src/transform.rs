@@ -1,4 +1,5 @@
 use crate::JSONMapping;
+use proc_macro2::TokenStream;
 
 /// Custom transformations can be done by implementing this trait
 pub trait Transformer {
@@ -24,6 +25,11 @@ pub trait Transformer {
     /// Adds a way to add the JSON mapping to a property
     fn json_mapping(&self, _table_name: &str, _column_name: &str) -> Option<JSONMapping> {
         None
+    }
+
+    /// Possibility to add attributes to a field
+    fn attributes(&self, _table_name: &str, _column_name: &str) -> TokenStream {
+        Default::default()
     }
 
     /// Add custom derives

@@ -139,7 +139,6 @@ fn comp_pb(left: &PathBuf, right: &PathBuf) {
 pub struct JSONMapping {
     pub import: String,
     pub raw_type: proc_macro2::TokenStream,
-    pub attributes: proc_macro2::TokenStream,
     pub nullable: bool,
 }
 
@@ -208,7 +207,6 @@ mod test {
                         raw_type: quote! {
                             MyJsonType
                         },
-                        attributes: Default::default(),
                         nullable: column_name == "json_nullable",
                     });
                 }
