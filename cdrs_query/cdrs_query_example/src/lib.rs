@@ -62,12 +62,14 @@ mod test {
         let a = vec![1];
         control!("select * from test_table where b = 1 and c in (?)", a);
 
+        let a = vec![1];
         control!(
             "select * from test_table where b = 1 and c in (?) limit 1",
             a
         );
 
         let val = 1;
+        let a = vec![1];
 
         control!(
             "select * from test_table where b = 1 and c in (?) limit ?",

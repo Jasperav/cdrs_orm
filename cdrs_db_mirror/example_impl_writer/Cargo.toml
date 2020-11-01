@@ -15,7 +15,7 @@ cdrs_to_rust = { path = "../../cdrs_to_rust" }
 custom_derive = { path = "custom_derive" }
 cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
 cdrs_db_mirror = { path = ".." }
-uuid = { version = "0.8.1", features = ["v4"] }
+uuid = { version = "0.8", features = ["v4"] }
 quote = "1.0.*"
 cdrs_con = { path = "../../cdrs_con" }
 cdrs_to_rust = { path = "../../cdrs_to_rust" }

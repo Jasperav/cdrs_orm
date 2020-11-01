@@ -39,7 +39,7 @@ impl Parse for Query {
             .rfind('\"')
             .expect("Failed to find trailing quote");
         let query_pretty = stringified[starting_quote + 1..ending_quote].to_string();
-        let idents = if input.is_empty() {
+        let mut idents = if input.is_empty() {
             vec![]
         } else {
             let _: syn::Token![,] = syn::parse::Parse::parse(input)?;
@@ -83,15 +83,67 @@ impl Parse for Query {
             })
             .unzip();
 
+        let in_query = qmd
+            .extracted_columns
+            .iter()
+            .filter(|c| c.uses_in_value)
+            .collect::<Vec<_>>();
+        // There can't be two 'in' keywords in a query
+        assert!(in_query.len() <= 1);
+
+        // Make a clone for the idents.
+        // This is later on checked if the idents have the correct datatype
+        // The idents variable can not be used, because an element can be removed from the idents
+        // variable if the query contains a parameterized in query (see below)
+        // But because the data type needs to be checked always, keep the data checking in the same vec.
+        // So this comparison ident always contains the same elements as the ident variable, but when the
+        // query contains a parameterized in query, this variable contains 1 element more.
+        let idents_comparison = idents.clone();
+
+        // This is some really ugly code
+        // The idents must be transformed into the Value type from cdrs, so call into into them.
+        // However, there is a bug for vecs: https://github.com/AlexPikalov/cdrs/issues/354.
+        // If this bug is fixed, this ugly code can be removed.
+        // A vec is only used for 'in' queries, and only 1 in keyword is allowed.
+        // A workaround for the bug is to loop over the vec and call into on all elements separately.
+        // Check if an 'in' query is used.
+        let into_from_vec = match in_query.first() {
+            Some(cv) if cv.parameterized => {
+                // The query contains a parameterized in query.
+                // The matching ident must be found which contains the values for the in query.
+                // This is always a vec.
+                // If a parameterized limit query is used, take the second-last element, else the last element.
+                let index_to_remove = if query_pretty.ends_with(" limit ?") {
+                    2
+                } else {
+                    1
+                };
+
+                let ident = idents.remove(idents.len() - index_to_remove);
+
+                quote! {
+                    for ident in #ident {
+                        query_values.push(ident.into());
+                    }
+                }
+            }
+            _ => quote! {},
+        };
+
         let qv = quote! {{
             let mut query_values: Vec<cdrs::types::value::Value> = Vec::new();
 
             #(
                 // Check if the type is correct
-                debug_assert!((#types_comparison::from(#idents.clone()), true).1);
-
-                query_values.push(#idents.clone().into());
+                debug_assert!((#types_comparison::from(#idents_comparison.clone()), true).1);
             )*
+
+            #(
+                // Call into on every ident
+                query_values.push(#idents.into());
+            )*
+
+            #into_from_vec
 
             cdrs::query::QueryValues::SimpleValues(query_values)
         }};
@@ -109,7 +161,6 @@ impl Parse for Query {
 
 #[cfg(test)]
 mod test {
-
     #[test]
     fn test_compile() {}
 }

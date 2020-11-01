@@ -9,7 +9,8 @@ edition = "2018"
 [build-dependencies]
 cdrs_con = { path = "../../cdrs_con" }
 
-[dependencies]
+[dev-dependencies]
 cdrs_con = { path = "../../cdrs_con" }
 cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
 cdrs_query_simple = { path = "../../cdrs_query_simple" }
+uuid = { version = "0.8", features = ["v4"] }
