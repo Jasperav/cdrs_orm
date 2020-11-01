@@ -151,7 +151,8 @@ impl Parse for Query {
         Ok(Query {
             query_raw,
             query_pretty,
-            idents,
+            // Give back the comparison variable, since this always contains all idents that were used
+            idents: idents_comparison,
             types,
             qmd,
             qv,
