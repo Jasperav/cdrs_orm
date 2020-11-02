@@ -150,7 +150,6 @@ pub fn setup_test_keyspace() -> DbTestSession {
 
 /// Can recreate or reuse a keyspace and will create a dummy table for testing
 pub fn prepare_test_keyspace(session: &DbTestSession) {
-    // Don't always create the keyspace, because than concurrent exceptions can be thrown from Cassandra
     if keyspace_tables(session).is_empty() {
         recreate_keyspace(session, TEST_CDRS_DB_KEYSPACE);
     } else {

@@ -19,7 +19,7 @@ pub struct ColumnValue {
     /// If true, the column is assigned a question mark (... where a = ?)
     /// If false, the column has a fixed value (... where a = 1)
     pub parameterized: bool,
-    /// Only true if the column uses an in value (... where a in (?))
+    /// Only true if the column uses an in value (... where a in ?)
     pub uses_in_value: bool,
     /// Only true if the column is used in the where clause
     /// False if e.g. the column is part of the select clause
@@ -144,11 +144,13 @@ pub fn split_query(q: &str) -> (&str, &str) {
 /// Extracts columns that are used in the where clause
 /// ```
 /// use cdrs_con::crud::columns_after_where;
-/// let query = "select * from my_table where a = ? and c in (?)";
+/// let query = "select * from my_table where a = ? and c in ?";
 /// let extracted = columns_after_where(query);
 /// assert_eq!(2, extracted.len());
 /// assert_eq!("a", &extracted[0].column_name);
 /// assert_eq!("c", &extracted[1].column_name);
+/// assert!(!extracted[0].uses_in_value);
+/// assert!(extracted[1].uses_in_value);
 /// ```
 pub fn columns_after_where(query: &str) -> ExtractColumn {
     let w = " where ";
@@ -187,7 +189,7 @@ pub fn columns_after_where(query: &str) -> ExtractColumn {
                 let cv = ColumnValue {
                     column_name: suffix[..index].to_string(),
                     parameterized: val.contains('?'),
-                    uses_in_value: val == "(?)",
+                    uses_in_value: operator == &" in ",
                     is_part_of_where_clause: true,
                 };
 
@@ -205,91 +207,99 @@ pub fn columns_after_where(query: &str) -> ExtractColumn {
     column_values
 }
 
-#[cfg(test)]
-mod test {
-    use super::*;
+#[test]
+fn test_query_before_process() {
+    let query = "select * from some_table where a = 1 and b = ?";
+    let before_where = "select * from some_table";
+    let (query_extracted, before_where_extracted) = split_query(query);
 
-    #[test]
-    fn test_query_before_process() {
-        let query = "select * from some_table where a = 1 and b = ?";
-        let before_where = "select * from some_table";
-        let (query_extracted, before_where_extracted) = split_query(query);
+    assert_eq!(query, query_extracted);
+    assert_eq!(before_where, before_where_extracted);
 
-        assert_eq!(query, query_extracted);
-        assert_eq!(before_where, before_where_extracted);
+    let (query_extracted, before_where_extracted) =
+        split_query("select * from some_table where a = 1 and b = ? limit 100");
 
-        let (query_extracted, before_where_extracted) =
-            split_query("select * from some_table where a = 1 and b = ? limit 100");
+    assert_eq!(
+        "select * from some_table where a = 1 and b = ?",
+        query_extracted
+    );
+    assert_eq!(before_where, before_where_extracted);
 
-        assert_eq!(
-            "select * from some_table where a = 1 and b = ?",
-            query_extracted
-        );
-        assert_eq!(before_where, before_where_extracted);
+    let query = "insert into my_table(a, b) values (1, ?)";
+    let (query_extracted, before_where_extracted) = split_query(query);
 
-        let query = "insert into my_table(a, b) values (1, ?)";
-        let (query_extracted, before_where_extracted) = split_query(query);
+    assert_eq!(query, query_extracted);
+    assert_eq!(query, before_where_extracted);
+}
 
-        assert_eq!(query, query_extracted);
-        assert_eq!(query, before_where_extracted);
-    }
+#[test]
+fn test_columns_after_where() {
+    let v = columns_after_where("");
 
-    #[test]
-    fn test_columns_after_where() {
-        let v = columns_after_where("");
+    assert!(v.is_empty());
 
-        assert!(v.is_empty());
+    let v = columns_after_where("select * from dummy");
 
-        let v = columns_after_where("select * from dummy");
+    assert!(v.is_empty());
 
-        assert!(v.is_empty());
+    let v = columns_after_where("select * from dummy where a = 1");
 
-        let v = columns_after_where("select * from dummy where a = 1");
+    assert_eq!("a", &v[0].column_name);
+    assert!(!v[0].parameterized);
+    assert!(!v[0].uses_in_value);
 
-        assert_eq!("a", &v[0].column_name);
-        assert!(!v[0].parameterized);
+    let v = columns_after_where("select * from dummy where a = ?");
 
-        let v = columns_after_where("select * from dummy where a = ?");
+    assert_eq!("a", &v[0].column_name);
+    assert!(v[0].parameterized);
+    assert!(!v[0].uses_in_value);
 
-        assert_eq!("a", &v[0].column_name);
-        assert!(v[0].parameterized);
+    let v = columns_after_where("select * from dummy where a in ?");
 
-        let v = columns_after_where("select * from dummy where a in (?)");
+    assert_eq!("a", &v[0].column_name);
+    assert!(v[0].parameterized);
+    assert!(v[0].uses_in_value);
 
-        assert_eq!("a", &v[0].column_name);
-        assert!(v[0].parameterized);
+    let v = columns_after_where("select * from dummy where a = 1 and b > 0 and c <= somethingrandom and d < ? and e in (hi) and f = 2");
 
-        let v = columns_after_where("select * from dummy where a = 1 and b > 0 and c <= somethingrandom and d < ? and e in (hi) and f = 2");
+    assert_eq!("a", &v[0].column_name);
+    assert_eq!("b", &v[1].column_name);
+    assert_eq!("c", &v[2].column_name);
+    assert_eq!("d", &v[3].column_name);
+    assert_eq!("e", &v[4].column_name);
+    assert_eq!("f", &v[5].column_name);
+    assert!(!v[0].parameterized);
+    assert!(!v[1].parameterized);
+    assert!(!v[2].parameterized);
+    assert!(v[3].parameterized);
+    assert!(!v[4].parameterized);
+    assert!(!v[5].parameterized);
 
-        assert_eq!("a", &v[0].column_name);
-        assert_eq!("b", &v[1].column_name);
-        assert_eq!("c", &v[2].column_name);
-        assert_eq!("d", &v[3].column_name);
-        assert_eq!("e", &v[4].column_name);
-        assert_eq!("f", &v[5].column_name);
-        assert!(!v[0].parameterized);
-        assert!(!v[1].parameterized);
-        assert!(!v[2].parameterized);
-        assert!(v[3].parameterized);
-        assert!(!v[4].parameterized);
-        assert!(!v[5].parameterized);
-    }
+    let v =
+        columns_after_where("select * from test_table where b = ? and c = 5 and d in ? limit 1");
 
-    #[test]
-    fn test_extract_columns() {
-        let select: Box<dyn CRUDOperation> = Box::new(Select);
+    assert!(!v[0].uses_in_value);
+    assert!(v[0].parameterized);
+    assert!(!v[1].uses_in_value);
+    assert!(!v[1].parameterized);
+    assert!(v[2].uses_in_value);
+    assert!(v[2].parameterized);
+}
 
-        let c = extract_columns(
-            "select a, b as c, d from table where a = 1 and b > 2 and e in (?) limit ?",
-            &*select,
-        );
+#[test]
+fn test_extract_columns() {
+    let select: Box<dyn CRUDOperation> = Box::new(Select);
 
-        assert_eq!(6, c.len());
-        assert_eq!("a", &c[0].column_name);
-        assert_eq!("b", &c[1].column_name);
-        assert_eq!("d", &c[2].column_name);
-        assert_eq!("a", &c[3].column_name);
-        assert_eq!("b", &c[4].column_name);
-        assert_eq!("e", &c[5].column_name);
-    }
+    let c = extract_columns(
+        "select a, b as c, d from table where a = 1 and b > 2 and e in ? limit ?",
+        &*select,
+    );
+
+    assert_eq!(6, c.len());
+    assert_eq!("a", &c[0].column_name);
+    assert_eq!("b", &c[1].column_name);
+    assert_eq!("d", &c[2].column_name);
+    assert_eq!("a", &c[3].column_name);
+    assert_eq!("b", &c[4].column_name);
+    assert_eq!("e", &c[5].column_name);
 }

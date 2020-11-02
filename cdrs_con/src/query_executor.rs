@@ -101,11 +101,18 @@ pub fn extract_query_meta_data<S: AsRef<str> + std::fmt::Display>(query: &S) -> 
 pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData {
     let qmd = extract_query_meta_data(&query);
 
-    let values = qmd
-        .parameterized_columns_data_types
+    let mut values = Vec::new();
+
+    for (index, c) in qmd
+        .extracted_columns
         .iter()
-        .map(|cdr| random_value_for_cs_type(cdr))
-        .collect::<Vec<_>>();
+        .filter(|c| c.parameterized)
+        .enumerate()
+    {
+        let data_type = &qmd.parameterized_columns_data_types[index];
+
+        values.push(random_value_for_cs_type(data_type, c.uses_in_value));
+    }
 
     let session = create_test_db_session();
 
@@ -126,24 +133,35 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
 }
 
 /// Generates a random value for a given data type
-fn random_value_for_cs_type(cdt: &CassandraDataType) -> Value {
+fn random_value_for_cs_type(cdt: &CassandraDataType, uses_in_query: bool) -> Value {
+    macro_rules! into {
+        ($val: expr) => {{
+            if uses_in_query {
+                // Execute it with two values
+                vec![$val, $val].into()
+            } else {
+                $val.into()
+            }
+        }};
+    };
+
     match cdt {
-        CassandraDataType::TinyInt => i8::MAX.into(),
-        CassandraDataType::SmallInt => i16::MAX.into(),
-        CassandraDataType::Int => i32::MAX.into(),
+        CassandraDataType::TinyInt => into!(i8::MAX),
+        CassandraDataType::SmallInt => into!(i16::MAX),
+        CassandraDataType::Int => into!(i32::MAX),
         CassandraDataType::BigInt
         | CassandraDataType::Time
         | CassandraDataType::Timestamp
-        | CassandraDataType::Counter => i64::MAX.into(),
+        | CassandraDataType::Counter => into!(i64::MAX),
         CassandraDataType::Text | CassandraDataType::Ascii | CassandraDataType::Varchar => {
-            "_VALUE_FOR_QUERY_VALUE_TESTING".into()
+            into!("_VALUE_FOR_QUERY_VALUE_TESTING")
         }
-        CassandraDataType::Boolean => true.into(),
-        CassandraDataType::Float => f32::MAX.into(),
-        CassandraDataType::Double => f64::MAX.into(),
-        CassandraDataType::Uuid => uuid::Uuid::parse_str("3866a82f-f37c-446c-8838-fb6686c3acf2")
-            .unwrap()
-            .into(),
+        CassandraDataType::Boolean => into!(true),
+        CassandraDataType::Float => into!(f32::MAX),
+        CassandraDataType::Double => into!(f64::MAX),
+        CassandraDataType::Uuid => {
+            into!(uuid::Uuid::parse_str("3866a82f-f37c-446c-8838-fb6686c3acf2").unwrap())
+        }
     }
 }
 
@@ -176,6 +194,14 @@ mod test {
     use super::*;
     use crate::crud::ColumnValue;
     use crate::{query, setup_test_keyspace, TEST_TABLE};
+
+    #[test]
+    fn test_in() {
+        let _ = setup_test_keyspace();
+
+        test_query("select * from test_table where b = ? and c = 5 and d in ? limit 1");
+        test_query("select * from test_table where b = ? and c = ? and d in (1, 2) limit 1");
+    }
 
     #[test]
     fn test_extract_query_meta_data() {

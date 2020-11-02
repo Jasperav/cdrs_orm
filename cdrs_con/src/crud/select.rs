@@ -38,6 +38,10 @@ impl CRUDOperation for Select {
     }
 
     fn query_type(&self, query: &str, full_pk: bool) -> QueryType {
+        if query.contains(" in (?)") {
+            panic!("An in query should invoked by doing 'in ?', not 'in (?)', since this always select only 0/1 rows");
+        }
+
         let query_is_limited_by_one = query.ends_with(" limit 1");
         let counts = query.contains("count(");
 
