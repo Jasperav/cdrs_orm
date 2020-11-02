@@ -59,19 +59,25 @@ mod test {
         let b = "sadas";
         control!("select * from another_test_table where a = 1 and b = ?", b);
 
-        let a = vec![1];
-        control!("select * from test_table where b = 1 and c in ?", a);
+        let a = vec![1, 2, 3];
+        let (_, values) = control!("select * from test_table where b = 1 and c in ?", a);
 
-        let a = vec![1];
+        assert_eq!(query_values!(a), values);
+
+        let a = vec![1, 2];
         control!("select * from test_table where b = 1 and c in ? limit 1", a);
 
         let val = 1;
+        let c = 5;
 
-        control!(
-            "select * from test_table where b = 1 and c in ? limit ?",
+        let (_, values) = control!(
+            "select * from test_table where b = ? and c in ? limit ?",
+            c,
             a,
             val
         );
+
+        assert_eq!(query_values!(c, a, val), values);
 
         assert_eq!(8, control!("truncate test_table").0);
     }
