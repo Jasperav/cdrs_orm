@@ -114,6 +114,15 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
         values.push(random_value_for_cs_type(data_type, c.uses_in_value));
     }
 
+    // Push a value if the query is limited by a parameter
+    if query.as_ref().contains(" limit ?") {
+        // The last parameterized_columns_data_types contains the limit data type
+        values.push(random_value_for_cs_type(
+            qmd.parameterized_columns_data_types.last().unwrap(),
+            false,
+        ));
+    }
+
     let session = create_test_db_session();
 
     use_keyspace(&session, &keyspace());
@@ -200,6 +209,7 @@ mod test {
         let _ = setup_test_keyspace();
 
         test_query("select * from test_table where b = ? and c = 5 and d in ? limit 1");
+        test_query("select * from test_table where b = ? and c = 5 and d in ? limit ?");
         test_query("select * from test_table where b = ? and c = ? and d in (1, 2) limit 1");
     }
 

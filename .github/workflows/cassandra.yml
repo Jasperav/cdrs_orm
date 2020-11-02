@@ -55,3 +55,96 @@ jobs:
         run: cargo +nightly fix --package cdrs_con --all-features --allow-dirty --allow-staged --jobs=1
       - name: test cdrs_con
         run: cargo +nightly test --package cdrs_con --verbose -- --test-threads=1
+      - name: clippy cdrs_con
+        run: cargo +nightly clippy --package cdrs_con --fix -Z unstable-options --allow-dirty --allow-staged
+      - name: clean cdrs_con
+        run: cargo +nightly clean --package cdrs_con
+      - name: build cdrs_con
+        run: cargo +nightly build --package cdrs_con --jobs=1
+      - name: clippy cdrs_con
+        run: cargo +nightly clippy --package cdrs_con -- -D warnings
+
+      - name: clean cdrs_db_mirror
+        run: cargo +nightly clean --package cdrs_db_mirror
+      - name: build cdrs_db_mirror
+        run: cargo +nightly build --package cdrs_db_mirror --jobs=1
+      - name: fmt cdrs_db_mirror
+        run: cargo +nightly fmt --package cdrs_db_mirror
+      - name: fix cdrs_db_mirror
+        run: cargo +nightly fix --package cdrs_db_mirror --all-features --allow-dirty --allow-staged --jobs=1
+      - name: test cdrs_db_mirror
+        run: cargo +nightly test --package cdrs_db_mirror --verbose -- --test-threads=1
+      - name: clippy cdrs_db_mirror
+        run: cargo +nightly clippy --package cdrs_db_mirror --fix -Z unstable-options --allow-dirty --allow-staged
+      - name: clean cdrs_db_mirror
+        run: cargo +nightly clean --package cdrs_db_mirror
+      - name: build cdrs_db_mirror
+        run: cargo +nightly build --package cdrs_db_mirror --jobs=1
+      - name: clippy cdrs_db_mirror
+        run: cargo +nightly clippy --package cdrs_db_mirror -- -D warnings
+
+      - name: clean cdrs_query_writer
+        run: cargo +nightly clean --package cdrs_query_writer
+      - name: build cdrs_query_writer
+        run: cargo +nightly build --package cdrs_query_writer --jobs=1
+      - name: fmt cdrs_query_writer
+        run: cargo +nightly fmt --package cdrs_query_writer
+      - name: fix cdrs_query_writer
+        run: cargo +nightly fix --package cdrs_query_writer --all-features --allow-dirty --allow-staged --jobs=1
+      - name: test cdrs_query_writer
+        run: cargo +nightly test --package cdrs_query_writer --verbose -- --test-threads=1
+      - name: clippy cdrs_query_writer
+        run: cargo +nightly clippy --package cdrs_query_writer --fix -Z unstable-options --allow-dirty --allow-staged
+      - name: clean cdrs_query_writer
+        run: cargo +nightly clean --package cdrs_query_writer
+      - name: build cdrs_query_writer
+        run: cargo +nightly build --package cdrs_query_writer --jobs=1
+      - name: clippy cdrs_query_writer
+        run: cargo +nightly clippy --package cdrs_query_writer -- -D warnings
+
+      - name: clean cdrs_to_rust
+        run: cargo +nightly clean --package cdrs_to_rust
+      - name: build cdrs_to_rust
+        run: cargo +nightly build --package cdrs_to_rust --jobs=1
+      - name: fmt cdrs_to_rust
+        run: cargo +nightly fmt --package cdrs_to_rust
+      - name: fix cdrs_to_rust
+        run: cargo +nightly fix --package cdrs_to_rust --all-features --allow-dirty --allow-staged --jobs=1
+      - name: test cdrs_to_rust
+        run: cargo +nightly test --package cdrs_to_rust --verbose -- --test-threads=1
+      - name: clippy cdrs_to_rust
+        run: cargo +nightly clippy --package cdrs_to_rust --fix -Z unstable-options --allow-dirty --allow-staged
+      - name: clean cdrs_to_rust
+        run: cargo +nightly clean --package cdrs_to_rust
+      - name: build cdrs_to_rust
+        run: cargo +nightly build --package cdrs_to_rust --jobs=1
+      - name: clippy cdrs_to_rust
+        run: cargo +nightly clippy --package cdrs_to_rust -- -D warnings
+
+      - name: clean cdrs_query
+        run: cargo +nightly clean --package cdrs_query
+      - name: build cdrs_query
+        run: cargo +nightly build --package cdrs_query --jobs=1
+      - name: fmt cdrs_query
+        run: cargo +nightly fmt --package cdrs_query
+      - name: fix cdrs_query
+        run: cargo +nightly fix --package cdrs_query --all-features --allow-dirty --allow-staged --jobs=1
+      - name: test cdrs_query
+        run: cargo +nightly test --package cdrs_query --verbose -- --test-threads=1
+      - name: clippy cdrs_query
+        run: cargo +nightly clippy --package cdrs_query --fix -Z unstable-options --allow-dirty --allow-staged
+      - name: clean cdrs_query
+        run: cargo +nightly clean --package cdrs_query
+      - name: build cdrs_query
+        run: cargo +nightly build --package cdrs_query --jobs=1
+      - name: clippy cdrs_query
+        run: cargo +nightly clippy --package cdrs_query -- -D warnings
+
+      - name: clean cdrs_query_example
+        run: cargo +nightly clean --package cdrs_query_example
+      - name: build cdrs_query_example
+        run: cargo +nightly build --package cdrs_query_example --jobs=1
+      - name: fmt cdrs_query_example
+        run: cargo +nightly fmt --package cdrs_query_example
+      - name: fix cdrs_query_example
+        run: cargo +nightly fix --package cdrs_query_example --all-features --allow-dirty --allow-staged --jobs=1
