@@ -16,4 +16,4 @@ rand = "0.7.*"
 serde = "1.*"
 rand_derive2 = "0.1"
 cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
-uuid = "0.8"
+uuid = "0.8.*"
