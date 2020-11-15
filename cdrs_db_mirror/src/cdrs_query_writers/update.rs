@@ -133,7 +133,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
                         }
 
                         let columns_to_update: String = query.join(", ");
-                        let update_statement = format!("update {} set {}{}", stringify!(#name), columns_to_update, #pk_struct::#pk);
+                        let update_statement = format!("update {} set {}{}", #db_name, columns_to_update, #pk_struct::#pk);
 
                         values.extend(self.where_clause_raw());
 
