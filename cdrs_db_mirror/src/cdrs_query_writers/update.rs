@@ -83,7 +83,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
             let mut e = if inf.materialized_view.is_none() {
                 quote! {
-                    #[derive(Clone)]
+                    #[derive(Clone, Debug)]
                     pub enum #enum_ident {
                         #(#enum_cases(#tys)),*
                     }

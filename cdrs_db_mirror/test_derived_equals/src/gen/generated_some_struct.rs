@@ -645,6 +645,19 @@ mod generated_some_struct {
             }
         }
     }
+    #[automatically_derived]
+    #[allow(unused_qualifications)]
+    impl ::core::fmt::Debug for SomeStructUpdatableColumns {
+        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
+            match (&*self,) {
+                (&SomeStructUpdatableColumns::Name(ref __self_0),) => {
+                    let mut debug_trait_builder = f.debug_tuple("Name");
+                    let _ = debug_trait_builder.field(&&(*__self_0));
+                    debug_trait_builder.finish()
+                }
+            }
+        }
+    }
     impl SomeStructPrimaryKey {
         pub fn update_dyn_qv(
             &self,
