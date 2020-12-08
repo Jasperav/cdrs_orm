@@ -30,46 +30,58 @@ Add the following to your Cargo.toml...
 cdrs_orm = "*"
 ```
 
-...or add a dependency on a separate crate.
+...or add a dependency on one of the separate crates. The **cdrs_orm** crate re-exports all of the separate crates.
 
-### Tip
-Follow the steps below to have always in sync Rust structs derived from the database and compile time safe queries:
-1. Generate the Rust structs with the cdrs_to_rust crate. Use a build.rs so that the structs are regenerated at compile time.
-2. Create your own function mapping with the cdrs_db_mirror so you have your own business logic with pre-generated queries.
-3. Use the cdrs_query_simple crate for compile time and type checked queries (note: set the TEST_CDRS_DB_KEYSPACE_KEY env var
-to a test keyspace).
-4. To see a full expanded entity with the db_mirror attribute, see package test_derived_equals/src/gen 
+This is a global overview of all the crates, for more information read the README.md in the crate or check the example projects
+in the crates.
 
-all crates have example projects
-
-## Crates
-This is a global overview of all the crates, for more information read the README.md of the crate.
-#### cdrs_con
+**cdrs_con**
 - querying meta data.
 - creating connections for testing.
 - reading and validating raw queries.
-#### cdrs_db_mirror
-Proc macro crate which provides the following derive macros which you can place on your type:
-  - DBJson: indicates this type maps to a column type. The column type must be of type string in the database, but
-  you can use this type in a Rust struct. This is automatic JSON mapping so you don't have to manually serialize and deserialize. 
-  - DBMirror: generates CRUD methods. Don't annotate types yourself, you should use cdrs_to_rust which writes the
-  annotations correctly. 
-#### cdrs_orm_util
+
+**cdrs_db_mirror**
+
+Proc macro crate which provides the following derive macros which you can place on top of your type:
+- `DBJson`: indicates this type maps to a column type. The column type must be of type `string` in the database, but
+  you can use the JSON type in a Rust `struct`. You don't have to manually serialize and deserialize the JSON type anymore. 
+- `DBMirror`: generates CRUD methods based on property annotations. Note: don't annotate the fields yourself, you should use the `cdrs_to_rust` crate which writes the
+  `struct` and annotations correctly. 
+
+**cdrs_orm_util**
+
 Used for namespacing.
-#### cdrs_query
-Compile time and type checked queries. Use this with a proc macro crate.
-#### cdrs_query_simple
-Simple proc macro you can use for validating queries.
-The return value from the macro is a &'static str and query values.
-#### cdrs_query_writer
-The derive macro DBMirror writes CRUD methods for the annotated struct.
+
+**cdrs_query**
+
+Compile time and type checked queries.
+
+**cdrs_query_simple**
+
+Simple proc macro you can use for validating queries with the **cdrs_query** crate.
+The return value from the macro is a `&'static str` and query values.
+
+**cdrs_query_writer**
+
+The derive macro `DBMirror` writes CRUD methods for the annotated struct.
 Most of the time, you want to have custom behaviour for your application, like settings a default consistency level
-or returning a custom error type.
-DBMirror's method names are based on this crate and so should your crate. Your can add your custom function name
-and this crate will make it easy to call DBMirror's derived functions within your own functions.
-#### cdrs_to_rust
-Maps tables to Rust structs. It queries the database for the tables in the database and than this crate will
+or returning custom error types.
+`DBMirror`'s method names are based on this crate and so should your crate. Your can add your custom function name
+and this crate will make it easy to call `DBMirror`'s derived functions within your own functions.
+
+**cdrs_to_rust**
+
+Maps tables to Rust `struct`s. It queries the database for the tables in the database and than this crate will
 turn it into Rust structs.
+
+### Tip
+Follow the steps below to have always in sync Rust `struct`s derived from the database and compile time safe queries:
+1. Generate the Rust `struct`s with the **cdrs_to_rust** crate. Use a build.rs so that the `struct`s are regenerated at compile time.
+2. Create your own function mapping with the **cdrs_db_mirror** crate so you have your own business logic with pre-generated queries.
+3. Use the **cdrs_query_simple** crate for compile time and type checked queries.
+4. To see a full expanded entity with the `db_mirror` attribute, see package test_derived_equals/src/gen 
+
+All crates have example projects!
 
 ## TODO
 - Support more types
