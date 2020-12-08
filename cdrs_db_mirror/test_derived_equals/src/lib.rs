@@ -51,17 +51,14 @@ mod test {
                 .trim()
                 .to_owned()
         };
-        if replaced(&source_str) == replaced(&target_str) {
+
+        let target_replaced = replaced(&target_str);
+
+        if replaced(&source_str) == target_replaced {
             // Ok, equal
             return;
+        } else {
+            panic!("Not equal, target was: {:#?}", target_replaced);
         }
-
-        let replaced_source_str = source_str.replace(&target_str, "");
-        let replaced_target_str = target_str.replace(&source_str, "");
-
-        println!("{}", replaced_source_str);
-        println!("{}", replaced_target_str);
-
-        panic!("Not equal");
     }
 }

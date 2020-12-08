@@ -4,24 +4,22 @@
 [![Build Status](https://img.shields.io/github/workflow/status/jasperav/cdrs_orm/tests-cassandra/master)](https://github.com/jasperav/cdrs_orm/actions)
 
 This crate features subcrates which allows you to
-- automatically map tables to Rust structures (cdrs_to_rust): you don't have to manually map your tables to Rust structs.
-- write compile time checked queries: with the cdrs_query_simple! query you can write queries that are checked at compile time.
-- derive macro to generate boiler plate queries (insert, delete, select and update)
-- JSON mapping. If a column should represent a type that is serde::Serialize and serde::Deserialize, 
-it is possible to have a field with that type in the Rust struct. This means you don't have to manually serialize and deserialize.
+- automatic map tables to Rust `struct`s (crate: **cdrs_to_rust**).
+- compile time checked queries (crate: **cdrs_query_simple**)
+- derive macro to generate CRUD boilerplate queries (crate: **db_mirror**)
+- automatic JSON mapping (crate: **db_mirror**)
 
 All features have examples and a readme.md in the corresponding crate.
  
-There are CI tests for Cassandra and ScyllaDB.
+## Testing
+There are CI tests for both Cassandra and ScyllaDB.
+Before creating a PR, make sure to run to run the executable 'internal-ci'. This will validate the code and run the tests.
 
 ## Note
 - this crate does use https://github.com/Jasperav/cdrs. If the open PR's on https://github.com/AlexPikalov/cdrs are merged,
 that cdrs crate will be used
-- not all types are supported yet. Feel free to add them! Supported types can be found in CassandraDataType in crate cdrs_con.  
-- currently only available through git, not by crates.io (because the PR's aren't merged in the cdrs branch).
-
-## Contributing
-- Before creating a PR, make sure to run to run the executable 'internal-ci'. This will validate the code and run tests.
+- not all types are supported yet. Feel free to add them! Supported types can be found in CassandraDataType in crate **cdrs_con**.  
+- currently only available through git, not by crates.io (because the PR's are not yet merged in the cdrs crate).
 
 ## Usage
 
