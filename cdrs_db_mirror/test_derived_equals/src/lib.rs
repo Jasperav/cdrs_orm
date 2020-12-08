@@ -58,7 +58,7 @@ mod test {
             // Ok, equal
             return;
         } else {
-            panic!("Not equal, target was: {:#?}", target_str);
+            panic!("Not equal, target was: {}", target_str);
         }
     }
 }
