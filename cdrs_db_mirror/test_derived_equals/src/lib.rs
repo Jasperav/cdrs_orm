@@ -44,7 +44,7 @@ mod test {
             .unwrap();
 
         // TODO: After Rust 1.50.0 is stable, remove this code
-        // This is needed to make the test pass on Github CI
+        // TODO: This is needed to make the test pass on Github CI
         target_str = target_str.replace(
             "::core::panicking::panic(\"assertion failed: !vec.is_empty()\")",
             "{::std::rt::begin_panic(\"assertion failed: !vec.is_empty()\")}",
