@@ -63,7 +63,6 @@ mod test {
 
         if replaced(&source_str) == target_replaced {
             // Ok, equal
-            
         } else {
             panic!("Not equal, target was: {}", target_str);
         }

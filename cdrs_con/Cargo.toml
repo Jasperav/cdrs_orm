@@ -10,3 +10,4 @@ edition = "2018"
 cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
 cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
 uuid = "0.8"
+once_cell = "1.5"

@@ -9,6 +9,7 @@ use cdrs::frame::Frame;
 use cdrs::load_balancing::RoundRobin;
 use cdrs::query::{QueryExecutor, QueryValues};
 use cdrs::types::prelude::*;
+use once_cell::sync::Lazy;
 
 pub type DbTestSession = Session<RoundRobin<TcpConnectionPool<NoneAuthenticator>>>;
 
@@ -93,7 +94,11 @@ impl Columns {
 }
 
 /// Creates a quick and simple database session, ideally for testing purposes
-pub fn create_test_db_session() -> DbTestSession {
+/// This is inside a Lazy block because else if rapidly create_test_db_session is called,
+/// the following error can be thrown:
+/// 'IO error: Only one usage of each socket address (protocol/network address/port) is normally permitted. (os error 10048)'
+/// This is maybe because of r2d2 (because that is the crate that throws the exception)
+static GLOBAL_CONNECTION_FOR_TEST: Lazy<DbTestSession> = Lazy::new(|| {
     let database_url =
         env::var(CDRS_DATABASE_URL_KEY).unwrap_or_else(|_| "127.0.0.1:9042".to_string());
     // Connect to the database
@@ -101,6 +106,10 @@ pub fn create_test_db_session() -> DbTestSession {
     let cluster_config = ClusterTcpConfig(vec![node]);
 
     new_session(&cluster_config, RoundRobin::new()).expect("session should be created")
+});
+
+pub fn create_test_db_session() -> &'static DbTestSession {
+    &GLOBAL_CONNECTION_FOR_TEST
 }
 
 /// Sets a keyspace for a session
@@ -140,10 +149,10 @@ pub fn recreate_keyspace(session: &DbTestSession, keyspace: &str) {
 }
 
 /// Sets up a test keyspace
-pub fn setup_test_keyspace() -> DbTestSession {
+pub fn setup_test_keyspace() -> &'static DbTestSession {
     let session = create_test_db_session();
 
-    prepare_test_keyspace(&session);
+    prepare_test_keyspace(session);
 
     session
 }
