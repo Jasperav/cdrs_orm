@@ -6,7 +6,7 @@ edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [build-dependencies]
-dotenv = "0.15.*"
+dotenv = "0.15"
 cdrs_con = { path = "../../cdrs_con" }
 quote = "1.0.*"
 cdrs_to_rust = { path = "../../cdrs_to_rust" }

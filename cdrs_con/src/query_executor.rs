@@ -18,6 +18,7 @@ pub struct QueryMetaData {
     pub struct_name: String,
     /// Only true if the query is limited
     pub limited: bool,
+    pub ttl: Option<i64>,
 }
 
 /// Extract the query meta data from a query
@@ -25,8 +26,6 @@ pub fn extract_query_meta_data<S: AsRef<str> + std::fmt::Display>(query: &S) -> 
     let as_str = query.as_ref();
     let crud = crate::crud::create_query_crud(as_str);
     let table_name = crate::crud::extract_table_name(&query, &*crud);
-
-    // TODO: Maybe a singleton connection performs better
     let session = create_test_db_session();
 
     use_keyspace(&session, &keyspace());
@@ -37,9 +36,15 @@ pub fn extract_query_meta_data<S: AsRef<str> + std::fmt::Display>(query: &S) -> 
         panic!("Table '{}' in keyspace '{}' does not exists (or does not have columns, which is useless)", table_name, keyspace());
     }
 
-    let extracted_columns = crate::crud::extract_columns(query.as_ref(), &*crud);
+    let result = extract_ttl(as_str);
+    let (as_str, ttl) = match &result {
+        None => (as_str, None),
+        Some((q, ttl)) => (q.as_ref(), Some(*ttl)),
+    };
 
-    if query.as_ref().starts_with("insert") && extracted_columns.len() != columns.len() {
+    let extracted_columns = crate::crud::extract_columns(as_str, &*crud);
+
+    if as_str.starts_with("insert") && extracted_columns.len() != columns.len() {
         panic!("Insert query is missing values")
     }
 
@@ -90,10 +95,25 @@ pub fn extract_query_meta_data<S: AsRef<str> + std::fmt::Display>(query: &S) -> 
     QueryMetaData {
         extracted_columns,
         parameterized_columns_data_types,
-        query_type: crud.query_type(query.as_ref(), is_full_pk),
+        query_type: crud.query_type(as_str, is_full_pk),
         struct_name: table_name_to_struct_name(table_name),
         limited: as_str.contains(" limit "),
+        ttl,
     }
+}
+
+fn extract_ttl(query: &str) -> Option<(String, i64)> {
+    let matcher = regex::Regex::new(" using ttl\\s+\\b(\\w+)\\b").unwrap();
+    let m = matcher.find(query)?;
+    let using_ttl = " using ttl ";
+    let without_using_ttl = m.as_str().replace(using_ttl, "");
+    let ttl = without_using_ttl.parse().expect(&format!(
+        "Something went wrong while trying to parse '{}' to i64",
+        without_using_ttl
+    ));
+    let query_without_ttl = query.replace(&format!("{}{}", using_ttl, ttl), "");
+
+    Some((query_without_ttl, ttl))
 }
 
 /// Tests is a query is correct
@@ -205,6 +225,27 @@ mod test {
     use crate::{query, setup_test_keyspace, TEST_TABLE};
 
     #[test]
+    fn ttl() {
+        let no_ttl = "select * from no_ttl";
+
+        assert!(extract_ttl(&no_ttl).is_none());
+
+        let simple_ttl = "select * from a_ttl using ttl 102";
+
+        assert_eq!(
+            ("select * from a_ttl".to_string(), 102),
+            extract_ttl(simple_ttl).unwrap()
+        );
+
+        let query = "select * from a_ttl using ttl 103 limit 1";
+
+        assert_eq!(
+            ("select * from a_ttl limit 1".to_string(), 103),
+            extract_ttl(query).unwrap()
+        );
+    }
+
+    #[test]
     fn test_in() {
         let _ = setup_test_keyspace();
 
@@ -215,10 +256,13 @@ mod test {
 
     #[test]
     fn test_extract_query_meta_data() {
+        dotenv::dotenv().unwrap();
+
         let _ = setup_test_keyspace();
 
-        let qmd =
-            extract_query_meta_data(&"select * from test_table where a = ? and b = 1 limit ?");
+        let qmd = extract_query_meta_data(
+            &"select * from test_table where a = ? and b = 1 using ttl 2 limit ?",
+        );
 
         assert_eq!(
             QueryMetaData {
@@ -241,8 +285,9 @@ mod test {
                     CassandraDataType::Int
                 ],
                 query_type: QueryType::SelectMultiple,
-                struct_name: "TestTable".to_string(),
+                struct_name: "test_table".to_string(),
                 limited: true,
+                ttl: Some(2)
             },
             qmd
         );

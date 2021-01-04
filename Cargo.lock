@@ -86,7 +86,9 @@ version = "0.1.0"
 dependencies = [
  "cdrs",
  "cdrs_helpers_derive",
+ "dotenv",
  "once_cell",
+ "regex",
  "uuid",
 ]
 
