@@ -111,7 +111,15 @@ fn extract_ttl(query: &str) -> Option<(String, i64)> {
         "Something went wrong while trying to parse '{}' to i64",
         without_using_ttl
     ));
-    let query_without_ttl = query.replace(&format!("{}{}", using_ttl, ttl), "");
+    let ttl_string = format!("{}{}", using_ttl, ttl);
+
+    // Only supported at the end
+    assert!(query.ends_with(&ttl_string));
+
+    // Only insert queries are allowed to have TTL
+    assert!(query.starts_with("insert into "));
+
+    let query_without_ttl = query.replace(&ttl_string, "");
 
     Some((query_without_ttl, ttl))
 }
@@ -226,22 +234,15 @@ mod test {
 
     #[test]
     fn ttl() {
-        let no_ttl = "select * from no_ttl";
+        let no_ttl = "insert into no_ttl(c) values (1)";
 
         assert!(extract_ttl(&no_ttl).is_none());
 
-        let simple_ttl = "select * from a_ttl using ttl 102";
+        let ttl = "insert into no_ttl(c) values (1) using ttl 102";
 
         assert_eq!(
-            ("select * from a_ttl".to_string(), 102),
-            extract_ttl(simple_ttl).unwrap()
-        );
-
-        let query = "select * from a_ttl using ttl 103 limit 1";
-
-        assert_eq!(
-            ("select * from a_ttl limit 1".to_string(), 103),
-            extract_ttl(query).unwrap()
+            ("insert into no_ttl(c) values (1)".to_string(), 102),
+            extract_ttl(ttl).unwrap()
         );
     }
 
@@ -260,9 +261,8 @@ mod test {
 
         let _ = setup_test_keyspace();
 
-        let qmd = extract_query_meta_data(
-            &"select * from test_table where a = ? and b = 1 using ttl 2 limit ?",
-        );
+        let qmd =
+            extract_query_meta_data(&"select * from test_table where a = ? and b = 1 limit ?");
 
         assert_eq!(
             QueryMetaData {
@@ -285,9 +285,9 @@ mod test {
                     CassandraDataType::Int
                 ],
                 query_type: QueryType::SelectMultiple,
-                struct_name: "test_table".to_string(),
+                struct_name: "TestTable".to_string(),
                 limited: true,
-                ttl: Some(2)
+                ttl: None
             },
             qmd
         );
