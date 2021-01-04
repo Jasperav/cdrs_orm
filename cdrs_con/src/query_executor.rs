@@ -142,8 +142,8 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
         values.push(random_value_for_cs_type(data_type, c.uses_in_value));
     }
 
-    // Push a value if the query is limited by a parameter
-    if query.as_ref().contains(" limit ?") {
+    // Push a value if the query is limited by a parameter or using a parameterized TTL
+    if query.as_ref().contains(" limit ?") || query.as_ref().contains(" using ttl ?") {
         // The last parameterized_columns_data_types contains the limit data type
         values.push(random_value_for_cs_type(
             qmd.parameterized_columns_data_types.last().unwrap(),
@@ -172,24 +172,25 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
 /// Generates a random value for a given data type
 fn random_value_for_cs_type(cdt: &CassandraDataType, uses_in_query: bool) -> Value {
     macro_rules! into {
-        ($val: expr) => {{
+        ($val: expr) => {
             if uses_in_query {
                 // Execute it with two values
                 vec![$val, $val].into()
             } else {
                 $val.into()
             }
-        }};
+        };
     };
 
     match cdt {
         CassandraDataType::TinyInt => into!(i8::MAX),
         CassandraDataType::SmallInt => into!(i16::MAX),
-        CassandraDataType::Int => into!(i32::MAX),
+        // No max here, since that will crash if generating a test value for TTL
+        CassandraDataType::Int => into!(1234321),
         CassandraDataType::BigInt
         | CassandraDataType::Time
         | CassandraDataType::Timestamp
-        | CassandraDataType::Counter => into!(i64::MAX),
+        | CassandraDataType::Counter => into!(123),
         CassandraDataType::Text | CassandraDataType::Ascii | CassandraDataType::Varchar => {
             into!("_VALUE_FOR_QUERY_VALUE_TESTING")
         }
@@ -234,6 +235,9 @@ mod test {
 
     #[test]
     fn ttl() {
+        dotenv::dotenv().unwrap();
+
+        let session = setup_test_keyspace();
         let no_ttl = "insert into no_ttl(c) values (1)";
 
         assert!(extract_ttl(&no_ttl).is_none());
@@ -244,6 +248,23 @@ mod test {
             ("insert into no_ttl(c) values (1)".to_string(), 102),
             extract_ttl(ttl).unwrap()
         );
+
+        let query =
+            "insert into TestTable (a, b, c, d, e) values (1, ?, 2, ?, 3) using ttl 12345678";
+
+        session
+            .query_with_values(query, cdrs::query_values!(1, 2))
+            .unwrap();
+
+        test_query(&query);
+
+        let query = "insert into TestTable (a, b, c, d, e) values (2, ?, 4, ?, 5) using ttl ?";
+
+        session
+            .query_with_values(query, cdrs::query_values!(1, 2, 876543))
+            .unwrap();
+
+        test_query(&query);
     }
 
     #[test]
