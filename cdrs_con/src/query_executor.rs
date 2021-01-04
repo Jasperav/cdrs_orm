@@ -18,7 +18,7 @@ pub struct QueryMetaData {
     pub struct_name: String,
     /// Only true if the query is limited
     pub limited: bool,
-    pub ttl: Option<i64>,
+    pub ttl: Option<i32>,
 }
 
 /// Extract the query meta data from a query
@@ -102,13 +102,13 @@ pub fn extract_query_meta_data<S: AsRef<str> + std::fmt::Display>(query: &S) -> 
     }
 }
 
-fn extract_ttl(query: &str) -> Option<(String, i64)> {
+fn extract_ttl(query: &str) -> Option<(String, i32)> {
     let matcher = regex::Regex::new(" using ttl\\s+\\b(\\w+)\\b").unwrap();
     let m = matcher.find(query)?;
     let using_ttl = " using ttl ";
     let without_using_ttl = m.as_str().replace(using_ttl, "");
     let ttl = without_using_ttl.parse().expect(&format!(
-        "Something went wrong while trying to parse '{}' to i64",
+        "Something went wrong while trying to parse '{}' to i32",
         without_using_ttl
     ));
     let ttl_string = format!("{}{}", using_ttl, ttl);
