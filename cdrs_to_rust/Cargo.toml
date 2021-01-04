@@ -20,3 +20,4 @@ syn = "1.0.*"
 r2d2 = "0.8.*"
 proc-macro2 = "1.0.*"
 cdrs_con = { path = "../cdrs_con" }
+dotenv = "0.15"

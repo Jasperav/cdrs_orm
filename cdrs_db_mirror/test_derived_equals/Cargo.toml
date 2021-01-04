@@ -7,6 +7,9 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [build-dependencies]
 cdrs_con = { path = "../../cdrs_con" }
+log = "0.4"
+dotenv = "0.15"
+env_logger = "0.7"
 
 [dependencies]
 cdrs_db_mirror = { path = ".." }
@@ -17,3 +20,6 @@ serde = "1.*"
 rand_derive2 = "0.1"
 cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
 uuid = "0.8.*"
+dotenv = "0.15"
+log = "0.4"
+env_logger = "0.7"

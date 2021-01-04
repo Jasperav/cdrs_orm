@@ -169,6 +169,10 @@ mod test {
 
     #[test]
     fn test_generate() {
+        dotenv::dotenv().unwrap();
+
+        std::env::set_var("CAMEL_CASE_TO_DB_SNAKE_CASE", "0");
+
         let session = create_test_db_session();
 
         // It's important no other tables exists for this test

@@ -5,6 +5,7 @@ use quote::quote;
 pub struct ImplWriter;
 
 const INSERT: &str = "c_insert_unique";
+const INSERT_USING_TTL: &str = "c_insert_unique_using_ttl";
 const SELECT_UNIQUE: &str = "c_select_unique";
 const SELECT_ALL: &str = "c_select_all";
 const SELECT_ALL_COUNT: &str = "c_select_all_count";
@@ -16,7 +17,7 @@ const TRUNCATE: &str = "c_truncate";
 impl cdrs_query_writer::Writer for ImplWriter {
     fn write_pk(&self, inf: &Inf) -> TokenStream {
         assert_eq!("SomeStruct".to_string(), inf.name.to_string());
-        assert_eq!("SomeStruct", inf.table_name);
+        assert_eq!("some_struct", inf.table_name);
         assert_eq!(
             "SomeStructPrimaryKey".to_string(),
             inf.pk_struct.to_string()
@@ -65,8 +66,12 @@ impl cdrs_query_writer::Writer for ImplWriter {
                     }
                 }
             }
-            CRUD::InsertUnique => {
-                check!(INSERT);
+            CRUD::InsertUnique(using_ttl) => {
+                if using_ttl {
+                    check!(INSERT_USING_TTL);
+                } else {
+                    check!(INSERT);
+                }
             }
             CRUD::SelectUnique => {
                 check!(SELECT_UNIQUE);
@@ -99,6 +104,9 @@ impl cdrs_query_writer::Writer for ImplWriter {
 
     fn fn_name_insert(&self) -> &'static str {
         INSERT
+    }
+    fn fn_name_insert_using_ttl(&self) -> &'static str {
+        INSERT_USING_TTL
     }
 
     fn fn_name_select_unique(&self) -> &'static str {

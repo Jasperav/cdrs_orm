@@ -7,7 +7,7 @@ fn main() {
     recreate_keyspace(&session, TEST_CDRS_DB_KEYSPACE);
     query(
         &session,
-        "create table SomeStruct
+        "create table some_struct
 (
     id   int,
     another_id   int,

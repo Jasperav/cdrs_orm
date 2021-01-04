@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::env::{current_dir, set_current_dir};
 use std::fs::File;
 use std::io::Write;
@@ -193,7 +194,13 @@ pub fn execute_command(
     writeln!(yml, "{}  run: {}", whitespace, no_quotes).unwrap();
 
     if fmt_and_fix {
-        let output = Command::new("cargo").args(&args).output().unwrap();
+        let envs: HashMap<_, _> = std::env::vars().collect();
+
+        let output = Command::new("cargo")
+            .args(&args)
+            .envs(envs)
+            .output()
+            .unwrap();
 
         if !output.stderr.is_empty() && !output.status.success() {
             panic!("{}", String::from_utf8(output.stderr).unwrap());

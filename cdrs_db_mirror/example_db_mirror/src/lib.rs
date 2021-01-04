@@ -32,7 +32,7 @@ struct AnotherStruct {
 
 #[derive(cdrs_db_mirror::DBMirror, rand_derive2::RandGen)]
 #[allow(dead_code)]
-struct UUIDStruct {
+struct UuidStruct {
     #[partition_key]
     id: Uuid,
     // Just some column that is not part of the primary key
@@ -71,7 +71,7 @@ mod test_db_mirror {
     use crate::some_serialized_struct::SomeSerializedStruct;
     use crate::{
         FooStruct, FooStructUpdatableColumns, SomeStruct, SomeStructPrimaryKey, StructJsonMapping,
-        UUIDStruct, UUIDStructPrimaryKey,
+        UuidStruct, UuidStructPrimaryKey,
     };
     use cdrs::query::QueryValues;
     use cdrs::query_values;
@@ -80,6 +80,8 @@ mod test_db_mirror {
 
     #[test]
     fn json() {
+        dotenv::dotenv().unwrap();
+
         let s = StructJsonMapping {
             a: SomeSerializedStruct { id: 1 },
             b: SomeSerializedStruct { id: 2 },
@@ -105,22 +107,22 @@ mod test_db_mirror {
         let some_struct = generate_some_struct();
         let query_values: QueryValues = some_struct.query_values();
 
-        if let QueryValues::NamedValues(nv) = query_values {
-            assert_eq!(5, nv.len());
+        if let QueryValues::SimpleValues(sv) = query_values {
+            assert_eq!(5, sv.len());
 
             let id_val: Value = some_struct.id.into();
-            assert_eq!(&id_val, nv.get("id").unwrap());
+            assert_eq!(&id_val, sv.get(0).unwrap());
 
-            let cluster_key: Value = some_struct.cluster_key.into();
-            assert_eq!(&cluster_key, nv.get("cluster_key").unwrap());
+            let another_id: Value = some_struct.another_id.into();
+            assert_eq!(&another_id, sv.get(1).unwrap());
 
             let name_val: Value = some_struct.name.clone().into();
-            assert_eq!(&name_val, nv.get("name").unwrap());
+            assert_eq!(&name_val, sv.get(4).unwrap());
         } else {
-            panic!("Expected named values");
+            panic!("Expected simple values");
         }
 
-        let query = "insert into SomeStruct(id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?)";
+        let query = "insert into some_struct (id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?)";
 
         assert_eq!(query, SomeStruct::INSERT_QUERY);
 
@@ -152,7 +154,7 @@ mod test_db_mirror {
             .unwrap();
 
         assert_eq!(
-            "update FooStruct set name = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ? where id = ? and cluster_key = ?",
             query
         );
         assert_eq!(
@@ -173,7 +175,7 @@ mod test_db_mirror {
             .unwrap();
 
         assert_eq!(
-            "update FooStruct set name = ?, nickname = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ?, nickname = ? where id = ? and cluster_key = ?",
             query
         );
         assert_eq!(
@@ -193,7 +195,7 @@ mod test_db_mirror {
             .update_qv_name(foo_struct.name.clone());
 
         assert_eq!(
-            "update FooStruct set name = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ? where id = ? and cluster_key = ?",
             query
         );
         assert_eq!(
@@ -205,7 +207,7 @@ mod test_db_mirror {
             values
         );
         assert_eq!(
-            "update FooStruct set name = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ? where id = ? and cluster_key = ?",
             FooStruct::UPDATE_NAME_QUERY
         );
 
@@ -217,7 +219,7 @@ mod test_db_mirror {
                 )]);
 
         assert_eq!(
-            "update FooStruct set name = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ? where id = ? and cluster_key = ?",
             query
         );
         assert_eq!(
@@ -235,7 +237,7 @@ mod test_db_mirror {
         ]);
 
         assert_eq!(
-            "update FooStruct set name = ?, nickname = ? where id = ? and cluster_key = ?",
+            "update foo_struct set name = ?, nickname = ? where id = ? and cluster_key = ?",
             query
         );
         assert_eq!(
@@ -253,7 +255,7 @@ mod test_db_mirror {
     fn test_truncate() {
         let query = FooStruct::TRUNCATE_QUERY;
 
-        assert_eq!("truncate FooStruct", query);
+        assert_eq!("truncate foo_struct", query);
     }
 
     #[test]
@@ -277,25 +279,25 @@ mod test_db_mirror {
     #[test]
     fn test_select_queries() {
         // Tests unique
-        let another_struct = UUIDStruct {
+        let another_struct = UuidStruct {
             id: uuid::Uuid::new_v4(),
             name: "".to_string(),
         };
-        let (query, qv) = UUIDStructPrimaryKey {
+        let (query, qv) = UuidStructPrimaryKey {
             id: another_struct.id,
         }
         .select_unique_qv();
 
-        assert_eq!("select * from UUIDStruct where id = ?", query);
+        assert_eq!("select * from uuid_struct where id = ?", query);
         assert_eq!(query_values!(another_struct.id), qv);
 
         // Tests SelectAll
-        assert_eq!("select * from UUIDStruct", UUIDStruct::SELECT_ALL_QUERY);
+        assert_eq!("select * from uuid_struct", UuidStruct::SELECT_ALL_QUERY);
 
         // Tests SelectAllCount
         assert_eq!(
-            "select count(*) from UUIDStruct",
-            UUIDStruct::SELECT_ALL_COUNT_QUERY
+            "select count(*) from uuid_struct",
+            UuidStruct::SELECT_ALL_COUNT_QUERY
         );
     }
 

@@ -2,16 +2,20 @@ mod generated_some_struct;
 
 #[cfg(test)]
 mod test {
+    use std::collections::HashMap;
     use std::fs::{create_dir, remove_dir_all, File};
     use std::io::{Read, Write};
     use std::process::Command;
 
     #[test]
     fn test_equals() {
-        let file = std::env::current_dir().unwrap().join("src");
+        env_logger::init();
+        dotenv::dotenv().unwrap();
 
+        let file = std::env::current_dir().unwrap().join("src");
+        let envs: HashMap<_, _> = std::env::vars().collect();
         let output = Command::new("cargo")
-            .env("TEST_CDRS_DB_KEYSPACE_KEY", "test_keyspace_for_testing")
+            .envs(envs)
             .arg("expand")
             .arg("generated_some_struct")
             .output()

@@ -19,7 +19,10 @@ impl CRUDOperation for Truncate {
         let table = &query[query.find(' ').unwrap() + 1..];
         // If there is another whitespace, it is an invalid query
         if table.contains(' ') {
-            panic!("This truncate query contains multiple whitespaces, but only 1 is allowed");
+            panic!(
+                "This truncate query contains multiple whitespaces, but only 1 is allowed: '{}'",
+                query
+            );
         }
 
         // No columns are present in a truncate query

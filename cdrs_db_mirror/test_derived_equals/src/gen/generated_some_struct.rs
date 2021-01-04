@@ -12,7 +12,7 @@ mod generated_some_struct {
         name: String,
     }
     impl SomeStruct {
-        pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
+        pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from some_struct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
     }
     impl SomeStructPrimaryKey {
         pub fn select_unique_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
@@ -20,7 +20,7 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const SELECT_ALL_QUERY: &'static str = "select * from SomeStruct";
+        pub const SELECT_ALL_QUERY: &'static str = "select * from some_struct";
         pub fn select_all_q() -> (&'static str, cdrs::query::QueryValues) {
             (
                 SomeStruct::SELECT_ALL_QUERY,
@@ -29,7 +29,7 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const SELECT_ALL_COUNT_QUERY: &'static str = "select count(*) from SomeStruct";
+        pub const SELECT_ALL_COUNT_QUERY: &'static str = "select count(*) from some_struct";
         pub fn select_all_count_q() -> (&'static str, cdrs::query::QueryValues) {
             (
                 SomeStruct::SELECT_ALL_COUNT_QUERY,
@@ -600,34 +600,41 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const INSERT_QUERY : & 'static str = "insert into SomeStruct(id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?)" ;
+        pub const INSERT_QUERY : & 'static str = "insert into some_struct (id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?)" ;
         pub fn query_values(&self) -> cdrs::query::QueryValues {
-            use std::collections::HashMap;
-            let mut values: HashMap<String, cdrs::types::value::Value> = HashMap::new();
-            values.insert(
-                "id".to_string(),
-                cdrs::types::value::Value::new_normal(self.id.clone()),
-            );
-            values.insert(
-                "another_id".to_string(),
-                cdrs::types::value::Value::new_normal(self.another_id.clone()),
-            );
-            values.insert(
-                "cluster_key".to_string(),
-                cdrs::types::value::Value::new_normal(self.cluster_key.clone()),
-            );
-            values.insert(
-                "another_cluster_key".to_string(),
-                cdrs::types::value::Value::new_normal(self.another_cluster_key.clone()),
-            );
-            values.insert(
-                "name".to_string(),
-                cdrs::types::value::Value::new_normal(self.name.clone()),
-            );
-            cdrs::query::QueryValues::NamedValues(values)
+            cdrs::query::QueryValues::SimpleValues(self.simple_values())
         }
         pub fn insert_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
             (SomeStruct::INSERT_QUERY, self.query_values())
+        }
+    }
+    impl SomeStruct {
+        fn simple_values(&self) -> Vec<cdrs::types::value::Value> {
+            let mut values: Vec<cdrs::types::value::Value> = Vec::new();
+            values.push(cdrs::types::value::Value::new_normal(self.id.clone()));
+            values.push(cdrs::types::value::Value::new_normal(
+                self.another_id.clone(),
+            ));
+            values.push(cdrs::types::value::Value::new_normal(
+                self.cluster_key.clone(),
+            ));
+            values.push(cdrs::types::value::Value::new_normal(
+                self.another_cluster_key.clone(),
+            ));
+            values.push(cdrs::types::value::Value::new_normal(self.name.clone()));
+            values
+        }
+    }
+    impl SomeStruct {
+        pub const INSERT_QUERY_USING_TTL : & 'static str = "insert into some_struct (id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?) using ttl ?" ;
+        pub fn insert_qv_using_ttl(
+            &self,
+            using_ttl: i32,
+        ) -> (&'static str, cdrs::query::QueryValues) {
+            let mut values = self.simple_values();
+            values.push(cdrs::types::value::Value::new_normal(using_ttl));
+            let qv = cdrs::query::QueryValues::SimpleValues(values);
+            (SomeStruct::INSERT_QUERY_USING_TTL, qv)
         }
     }
     pub enum SomeStructUpdatableColumns {
@@ -712,7 +719,7 @@ mod generated_some_struct {
                 let res = ::alloc::fmt::format(::core::fmt::Arguments::new_v1(
                     &["update ", " ", ""],
                     &match (
-                        &"SomeStruct",
+                        &"some_struct",
                         &to_update,
                         &SomeStructPrimaryKey::WHERE_CLAUSE_PK,
                     ) {
@@ -753,7 +760,7 @@ mod generated_some_struct {
                 let res = ::alloc::fmt::format(::core::fmt::Arguments::new_v1(
                     &["update ", " set ", ""],
                     &match (
-                        &"SomeStruct",
+                        &"some_struct",
                         &columns_to_update,
                         &SomeStructPrimaryKey::WHERE_CLAUSE_PK,
                     ) {
@@ -772,7 +779,7 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const UPDATE_NAME_QUERY : & 'static str = "update SomeStruct set name = ? where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
+        pub const UPDATE_NAME_QUERY : & 'static str = "update some_struct set name = ? where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
     }
     impl SomeStructPrimaryKey {
         pub fn update_qv_name(&self, name: String) -> (&'static str, cdrs::query::QueryValues) {
@@ -785,7 +792,7 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from SomeStruct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
+        pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from some_struct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
     }
     impl SomeStructPrimaryKey {
         pub fn delete_unique_qv(&self) -> (&'static str, cdrs::query::QueryValues) {
@@ -793,7 +800,7 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub const TRUNCATE_QUERY: &'static str = "truncate SomeStruct";
+        pub const TRUNCATE_QUERY: &'static str = "truncate some_struct";
         pub fn truncate_q() -> (&'static str, cdrs::query::QueryValues) {
             (
                 SomeStruct::TRUNCATE_QUERY,

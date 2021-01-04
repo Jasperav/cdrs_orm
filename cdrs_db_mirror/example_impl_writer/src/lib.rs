@@ -2,7 +2,7 @@ mod generated;
 
 #[cfg(test)]
 mod test {
-    use crate::generated::somestruct::SomeStruct;
+    use crate::generated::some_struct::SomeStruct;
 
     #[test]
     fn test_methods_available() {

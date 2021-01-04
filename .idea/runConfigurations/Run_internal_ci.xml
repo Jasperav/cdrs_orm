@@ -1,12 +1,16 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Run internal_ci" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
-    <option name="channel" value="DEFAULT" />
     <option name="command" value="run --package internal_ci --bin internal_ci" />
+    <option name="workingDirectory" value="file://$PROJECT_DIR$/internal_ci" />
+    <option name="channel" value="DEFAULT" />
     <option name="allFeatures" value="false" />
     <option name="emulateTerminal" value="false" />
     <option name="backtrace" value="SHORT" />
-    <option name="workingDirectory" value="file://$PROJECT_DIR$/internal_ci" />
-    <envs />
+    <envs>
+      <env name=" TEST_CDRS_DB_KEYSPACE_KEY" value="test_keyspace_for_testing" />
+    </envs>
+    <option name="isRedirectInput" value="false" />
+    <option name="redirectInputPath" value="" />
     <method v="2">
       <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
     </method>

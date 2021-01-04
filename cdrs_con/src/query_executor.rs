@@ -107,10 +107,12 @@ fn extract_ttl(query: &str) -> Option<(String, i32)> {
     let m = matcher.find(query)?;
     let using_ttl = " using ttl ";
     let without_using_ttl = m.as_str().replace(using_ttl, "");
-    let ttl = without_using_ttl.parse().expect(&format!(
-        "Something went wrong while trying to parse '{}' to i32",
-        without_using_ttl
-    ));
+    let ttl = without_using_ttl.parse().unwrap_or_else(|_| {
+        panic!(
+            "Something went wrong while trying to parse '{}' to i32",
+            without_using_ttl
+        )
+    });
     let ttl_string = format!("{}{}", using_ttl, ttl);
 
     // Only supported at the end
@@ -144,11 +146,8 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
 
     // Push a value if the query is limited by a parameter or using a parameterized TTL
     if query.as_ref().contains(" limit ?") || query.as_ref().contains(" using ttl ?") {
-        // The last parameterized_columns_data_types contains the limit data type
-        values.push(random_value_for_cs_type(
-            qmd.parameterized_columns_data_types.last().unwrap(),
-            false,
-        ));
+        // The last parameterized_columns_data_types contains either the limit data type or the ttl
+        values.push(random_value_for_cs_type(&CassandraDataType::Int, false));
     }
 
     let session = create_test_db_session();
@@ -172,25 +171,25 @@ pub fn test_query<S: AsRef<str> + std::fmt::Display>(query: S) -> QueryMetaData 
 /// Generates a random value for a given data type
 fn random_value_for_cs_type(cdt: &CassandraDataType, uses_in_query: bool) -> Value {
     macro_rules! into {
-        ($val: expr) => {
+        ($val: expr) => {{
             if uses_in_query {
                 // Execute it with two values
                 vec![$val, $val].into()
             } else {
                 $val.into()
             }
-        };
+        }};
     };
 
     match cdt {
         CassandraDataType::TinyInt => into!(i8::MAX),
         CassandraDataType::SmallInt => into!(i16::MAX),
         // No max here, since that will crash if generating a test value for TTL
-        CassandraDataType::Int => into!(1234321),
+        CassandraDataType::Int => into!(1),
         CassandraDataType::BigInt
         | CassandraDataType::Time
         | CassandraDataType::Timestamp
-        | CassandraDataType::Counter => into!(123),
+        | CassandraDataType::Counter => into!(1),
         CassandraDataType::Text | CassandraDataType::Ascii | CassandraDataType::Varchar => {
             into!("_VALUE_FOR_QUERY_VALUE_TESTING")
         }
@@ -250,7 +249,7 @@ mod test {
         );
 
         let query =
-            "insert into TestTable (a, b, c, d, e) values (1, ?, 2, ?, 3) using ttl 12345678";
+            "insert into test_table (a, b, c, d, e) values (1, ?, 2, ?, 3) using ttl 12345678";
 
         session
             .query_with_values(query, cdrs::query_values!(1, 2))
@@ -258,7 +257,7 @@ mod test {
 
         test_query(&query);
 
-        let query = "insert into TestTable (a, b, c, d, e) values (2, ?, 4, ?, 5) using ttl ?";
+        let query = "insert into test_table (a, b, c, d, e) values (2, ?, 4, ?, 5) using ttl ?";
 
         session
             .query_with_values(query, cdrs::query_values!(1, 2, 876543))

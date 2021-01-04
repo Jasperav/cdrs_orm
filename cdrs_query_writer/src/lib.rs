@@ -11,6 +11,7 @@ use quote::format_ident;
 pub const COLUMN_SEPARATOR: &str = "_";
 
 pub const INSERT: &str = "insert_qv";
+pub const INSERT_USING_TTL: &str = "insert_qv_using_ttl";
 pub const DELETE_UNIQUE: &str = "delete_unique_qv";
 pub const SELECT_UNIQUE: &str = "select_unique_qv";
 pub const SELECT_ALL: &str = "select_all_q";

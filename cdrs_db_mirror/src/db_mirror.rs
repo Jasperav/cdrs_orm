@@ -33,8 +33,8 @@ impl Writer for ImplWriter {
         crud: CRUD,
     ) -> proc_macro2::TokenStream {
         match crud {
-            CRUD::InsertUnique => {
-                crate::cdrs_query_writers::insert::generate(inf, db_mirror_fn_name)
+            CRUD::InsertUnique(using_ttl) => {
+                crate::cdrs_query_writers::insert::generate(inf, db_mirror_fn_name, using_ttl)
             }
             CRUD::UpdateUnique(update) => {
                 crate::cdrs_query_writers::update::generate(inf, db_mirror_fn_name, update)

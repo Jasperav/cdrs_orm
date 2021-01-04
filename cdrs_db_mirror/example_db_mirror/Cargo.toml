@@ -6,6 +6,7 @@ edition = "2018"
 
 [build-dependencies]
 cdrs_con = { path = "../../cdrs_con" }
+dotenv = "0.15"
 
 [dependencies]
 cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
@@ -17,3 +18,4 @@ cdrs_con = { path = "../../cdrs_con" }
 cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
 rand_derive2 = "0.1"
 rand = "0.7.*"
+dotenv = "0.15"

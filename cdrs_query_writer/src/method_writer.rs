@@ -1,6 +1,6 @@
 use crate::{
     pk_parameter, pk_struct, read_attributes, updatable_columns_enum, COLUMN_SEPARATOR,
-    DELETE_UNIQUE, INSERT, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, TRUNCATE,
+    DELETE_UNIQUE, INSERT, INSERT_USING_TTL, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, TRUNCATE,
     UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
 use cdrs_con::capitalizing::struct_name_to_db_table_name;
@@ -11,8 +11,10 @@ use proc_macro2_helper::named_struct_fields_from_data;
 use quote::format_ident;
 use syn::{DeriveInput, Field, Ident, Type};
 
+pub type UsingTTL = bool;
+
 pub enum CRUD<'a> {
-    InsertUnique,
+    InsertUnique(UsingTTL),
     UpdateUnique(Update<'a>),
     SelectUnique,
     SelectAll,
@@ -100,6 +102,9 @@ pub trait Writer {
     // Override the 'fn_name...' methods to a custom fn name
     fn fn_name_insert(&self) -> &'static str {
         INSERT
+    }
+    fn fn_name_insert_using_ttl(&self) -> &'static str {
+        INSERT_USING_TTL
     }
     fn fn_name_select_unique(&self) -> &'static str {
         SELECT_UNIQUE

@@ -1,12 +1,14 @@
 use cdrs_con::{create_test_db_session, query, recreate_keyspace, TEST_CDRS_DB_KEYSPACE};
 
 fn main() {
+    dotenv::dotenv().unwrap();
+
     let session = create_test_db_session();
 
     recreate_keyspace(&session, TEST_CDRS_DB_KEYSPACE);
     query(
         &session,
-        "create table AnotherStruct
+        "create table another_struct
 (
     id   int,
     name text,
@@ -15,7 +17,7 @@ fn main() {
     );
     query(
         &session,
-        "create table UUIDStruct
+        "create table uuid_struct
 (
     id   uuid,
     name text,
@@ -24,7 +26,7 @@ fn main() {
     );
     query(
         &session,
-        "create table SomeStruct
+        "create table some_struct
 (
     id   int,
     another_id   int,
@@ -36,7 +38,7 @@ fn main() {
     );
     query(
         &session,
-        "create table FooStruct
+        "create table foo_struct
 (
     id   int,
     cluster_key   int,
@@ -47,7 +49,7 @@ fn main() {
     );
     query(
         &session,
-        "create table StructJsonMapping
+        "create table struct_json_mapping
 (
     a   text,
     b   text,
