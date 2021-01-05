@@ -549,6 +549,7 @@ mod generated_some_struct {
             }
         }
     };
+    #[allow(clippy::from_over_into)]
     impl Into<cdrs::types::value::Bytes> for SomeStructPrimaryKey {
         fn into(self) -> cdrs::types::value::Bytes {
             serde_json::to_string(&self).unwrap().into()
