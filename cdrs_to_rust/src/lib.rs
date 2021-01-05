@@ -67,7 +67,7 @@ pub fn generate(base_dir: &Path, transformer: impl Transformer, imports: TokenSt
     // 1. mod x
     // 2. pub use x::X;
     // 3. newline
-    let mut path_mod_file = base_dir.clone();
+    let mut path_mod_file = base_dir.to_path_buf();
 
     path_mod_file.push("mod.rs");
 
