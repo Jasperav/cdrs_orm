@@ -179,7 +179,7 @@ fn random_value_for_cs_type(cdt: &CassandraDataType, uses_in_query: bool) -> Val
                 $val.into()
             }
         }};
-    };
+    }
 
     match cdt {
         CassandraDataType::TinyInt => into!(i8::MAX),
