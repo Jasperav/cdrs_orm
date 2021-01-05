@@ -46,7 +46,7 @@ impl cdrs_query_writer::Writer for ImplWriter {
                 assert_eq!(cdrs_query_writer::$to_check, db_mirror_fn_name_str);
                 assert_eq!($to_check, custom_fn_name_str);
             };
-        };
+        }
 
         match crud {
             CRUD::UpdateUnique(update) => {
