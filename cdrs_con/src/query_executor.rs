@@ -189,7 +189,7 @@ fn random_value_for_cs_type(cdt: &CassandraDataType, uses_in_query: bool) -> Val
         CassandraDataType::BigInt
         | CassandraDataType::Time
         | CassandraDataType::Timestamp
-        | CassandraDataType::Counter => into!(1),
+        | CassandraDataType::Counter => into!(i64::MAX),
         CassandraDataType::Text | CassandraDataType::Ascii | CassandraDataType::Varchar => {
             into!("_VALUE_FOR_QUERY_VALUE_TESTING")
         }
