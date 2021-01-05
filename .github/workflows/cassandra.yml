@@ -8,7 +8,7 @@ env:
   CARGO_TERM_COLOR: always
   TEST_CDRS_DB_KEYSPACE_KEY: test_keyspace_for_testing
   CAMEL_CASE_TO_DB_SNAKE_CASE: 1
-  RUSTFLAGS: -A clippy::from_over_into
+  RUSTFLAGS: -Aclippy::from_over_into
 
 jobs:
   test:
