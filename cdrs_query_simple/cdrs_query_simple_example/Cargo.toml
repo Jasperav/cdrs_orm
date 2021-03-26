@@ -11,5 +11,5 @@ cdrs_con = { path = "../../cdrs_con" }
 
 [dependencies]
 cdrs_con = { path = "../../cdrs_con" }
-cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs-tokio = { path = "../../../cdrs-tokio" }
 cdrs_query_simple = { path = "../../cdrs_query_simple" }

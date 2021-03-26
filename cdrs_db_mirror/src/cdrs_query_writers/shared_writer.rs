@@ -38,7 +38,7 @@ pub fn write_select_or_delete(
             pub const #const_name: &'static str = #query;
         }
         impl #pk_struct {
-            pub fn #fn_name(&self) -> (&'static str, cdrs::query::QueryValues) {
+            pub fn #fn_name(&self) -> (&'static str, cdrs_tokio::query::QueryValues) {
                 (#name::#const_name, self.where_clause())
             }
         }

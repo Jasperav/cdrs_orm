@@ -7,7 +7,7 @@ use uuid::Uuid;
     cdrs_db_mirror::DBMirror,
     PartialEq,
     Debug,
-    cdrs_helpers_derive::TryFromRow,
+    cdrs_tokio_helpers_derive::TryFromRow,
     rand_derive2::RandGen,
 )]
 #[allow(dead_code)]
@@ -73,10 +73,11 @@ mod test_db_mirror {
         FooStruct, FooStructUpdatableColumns, SomeStruct, SomeStructPrimaryKey, StructJsonMapping,
         UuidStruct, UuidStructPrimaryKey,
     };
-    use cdrs::query::QueryValues;
-    use cdrs::query_values;
-    use cdrs::types::value::Value;
-    use cdrs_con::{create_test_db_session, keyspace, query_with_values, rows, use_keyspace};
+    use cdrs_con::cdrs_tokio_transformer::{query_with_values_tokio, rows_tokio};
+    use cdrs_con::{create_test_db_session, keyspace, use_keyspace};
+    use cdrs_tokio::query::QueryValues;
+    use cdrs_tokio::query_values;
+    use cdrs_tokio::types::value::Value;
 
     #[test]
     fn json() {
@@ -93,10 +94,12 @@ mod test_db_mirror {
         use_keyspace(&session, &keyspace());
 
         let (query, values) = StructJsonMapping::insert_qv(&s);
-        query_with_values(&session, query, values);
+
+        query_with_values_tokio(&session, query, values);
 
         let (query, values) = s.primary_key().select_unique_qv();
-        let r: Vec<StructJsonMapping> = rows(Ok(query_with_values(&session, query, values)));
+        let r: Vec<StructJsonMapping> =
+            rows_tokio(Ok(query_with_values_tokio(&session, query, values)));
 
         assert_eq!(1, r.len());
         assert_eq!(&s, r.first().unwrap());

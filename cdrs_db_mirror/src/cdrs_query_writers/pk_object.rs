@@ -48,7 +48,7 @@ pub fn generate(inf: &Inf) -> TokenStream {
         "serde::Serialize",
         "serde::Deserialize",
         "cdrs_db_mirror::DBJson",
-        "cdrs_helpers_derive::TryFromRow",
+        "cdrs_tokio_helpers_derive::TryFromRow",
     ];
     let mut default_derives = default_derives
         .into_iter()
@@ -78,17 +78,17 @@ pub fn generate(inf: &Inf) -> TokenStream {
         impl #pk_struct {
             pub const #where_clause_pk: &'static str = #where_clause_query;
 
-            pub fn where_clause(&self) -> cdrs::query::QueryValues {
-                cdrs::query::QueryValues::SimpleValues(self.where_clause_raw())
+            pub fn where_clause(&self) -> cdrs_tokio::query::QueryValues {
+                cdrs_tokio::query::QueryValues::SimpleValues(self.where_clause_raw())
             }
 
-            pub fn where_clause_raw(&self) -> Vec<cdrs::types::value::Value> {
+            pub fn where_clause_raw(&self) -> Vec<cdrs_tokio::types::value::Value> {
                 use std::iter::FromIterator;
 
-                let mut query_values: Vec<cdrs::types::value::Value> = Vec::new();
+                let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::new();
 
                 #(
-                    query_values.push(cdrs::types::value::Value::new_normal(self.#idents.clone()));
+                    query_values.push(cdrs_tokio::types::value::Value::new_normal(self.#idents.clone()));
                 )*
 
                 query_values

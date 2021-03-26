@@ -12,5 +12,5 @@ cdrs_con = { path = "../../cdrs_con" }
 [dependencies]
 cdrs_query_example_proc_macro = { path = "./cdrs_query_example_proc_macro" }
 cdrs_con = { path = "../../cdrs_con" }
-cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs-tokio = { git = "https://github.com/Jasperav/cdrs-tokio.git" }
 trybuild = "1.0.*"

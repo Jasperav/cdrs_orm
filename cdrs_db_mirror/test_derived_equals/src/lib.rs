@@ -47,28 +47,30 @@ mod test {
             .read_to_string(&mut target_str)
             .unwrap();
 
-        // TODO: After Rust 1.50.0 is stable, remove this code
-        // TODO: This is needed to make the test pass on Github CI
-        target_str = target_str.replace(
-            "::core::panicking::panic(\"assertion failed: !vec.is_empty()\")",
-            "{::std::rt::begin_panic(\"assertion failed: !vec.is_empty()\")}",
-        );
-
         // Remove weird auto indenting when a file is in the module system
         let replaced = |s: &str| {
             s.replace("\n", "")
                 .replace("\t", "")
                 .replace(" ", "")
                 .trim()
-                .to_owned()
+                // Needed because else still newlines are shown
+                .split_whitespace()
+                .into_iter()
+                .collect::<Vec<_>>()
+                .join("")
+                
         };
 
         let target_replaced = replaced(&target_str);
+        let replaced = replaced(&source_str);
 
-        if replaced(&source_str) == target_replaced {
+        if replaced == target_replaced {
             // Ok, equal
         } else {
-            panic!("Not equal, target was: {}", target_str);
+            panic!(
+                "Not equal, target: \n{}\n, replaced: \n{}",
+                target_replaced, replaced
+            );
         }
     }
 }

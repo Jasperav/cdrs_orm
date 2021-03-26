@@ -16,10 +16,15 @@ There are CI tests for both Cassandra and ScyllaDB.
 Before creating a PR, make sure to run to run the executable 'internal-ci'. This will validate the code and run the tests.
 
 ## Note
-- this crate does use https://github.com/Jasperav/cdrs. If the open PR's on https://github.com/AlexPikalov/cdrs are merged,
-that cdrs crate will be used
+- this crate does use https://github.com/Jasperav/cdrs_tokio because it is not fully compatible with https://github.com/krojew/cdrs-tokio. 
 - not all types are supported yet. Feel free to add them! Supported types can be found in CassandraDataType in crate **cdrs_con**.  
-- currently only available through git, not by crates.io (because the PR's are not yet merged in the cdrs crate).
+- currently only available through git, not by crates.io.
+- cdrs_con uses the sync version of cdrs, because proc macro's are not async.
+
+## Compatibility
+- sync version is supported in the `sync` branch
+- cdrs-tokio version supported by default
+- scylla native driver will be supported when it is production ready
 
 ## Usage
 

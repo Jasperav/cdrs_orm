@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod test {
-    use cdrs::query_values;
     use cdrs_query_example_proc_macro::control;
+    use cdrs_tokio::query_values;
 
     #[test]
     fn test_non_compiling_code() {

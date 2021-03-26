@@ -36,7 +36,7 @@ pub trait Transformer {
     fn derive(&self, _struct_name: &str) -> Vec<&'static str> {
         vec![
             "cdrs_db_mirror::DBMirror",
-            "cdrs_helpers_derive::TryFromRow",
+            "cdrs_tokio_helpers_derive::TryFromRow",
         ]
     }
 

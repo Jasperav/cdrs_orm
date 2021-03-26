@@ -30,12 +30,12 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
                 }
 
                 impl #pk_struct {
-                    pub fn #fn_name(&self, #ident: #ty) -> (&'static str, cdrs::query::QueryValues) {
+                    pub fn #fn_name(&self, #ident: #ty) -> (&'static str, cdrs_tokio::query::QueryValues) {
                         let mut values = self.where_clause_raw();
 
-                        values.insert(0, cdrs::types::value::Value::new_normal(#ident));
+                        values.insert(0, cdrs_tokio::types::value::Value::new_normal(#ident));
 
-                        (#name::#const_name, cdrs::query::QueryValues::SimpleValues(values))
+                        (#name::#const_name, cdrs_tokio::query::QueryValues::SimpleValues(values))
                     }
                 }
             }
@@ -46,14 +46,14 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
             quote! {
                 impl #pk_struct {
-                    pub fn #fn_name(&self, #(#idents: #types),*) -> std::option::Option<(String, cdrs::query::QueryValues)> {
+                    pub fn #fn_name(&self, #(#idents: #types),*) -> std::option::Option<(String, cdrs_tokio::query::QueryValues)> {
                         let mut to_update: Vec<String> = std::vec::Vec::new();
-                        let mut qv: Vec<cdrs::types::value::Value> = std::vec::Vec::new();
+                        let mut qv: Vec<cdrs_tokio::types::value::Value> = std::vec::Vec::new();
 
                         #(
                             if let Some(s) = #idents {
                                 to_update.push(format!("{} = ?", #idents_name));
-                                qv.push(cdrs::types::value::Value::new_normal(s));
+                                qv.push(cdrs_tokio::types::value::Value::new_normal(s));
                             }
                         )*
 
@@ -69,7 +69,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
                         let string = format!("update {} {}{}", #db_name, to_update, #pk_struct::#pk);
 
-                        Some((string, cdrs::query::QueryValues::SimpleValues(qv)))
+                        Some((string, cdrs_tokio::query::QueryValues::SimpleValues(qv)))
                     }
                 }
             }
@@ -95,7 +95,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
             if !enum_cases.is_empty() && inf.materialized_view.is_none() {
                 e.extend(quote! {
                     impl #pk_struct {
-                        pub fn #fn_name(&self, #enum_pk_param: #enum_ident) -> (&'static str, cdrs::query::QueryValues) {
+                        pub fn #fn_name(&self, #enum_pk_param: #enum_ident) -> (&'static str, cdrs_tokio::query::QueryValues) {
                             match #enum_pk_param {
                                 #(#enum_ident::#enum_cases(val) => self.#enum_method_names(val)),*
                             }
@@ -118,10 +118,10 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
             quote! {
                 impl #pk_struct {
-                    pub fn #fn_name(&self, vec: std::vec::Vec<#enum_ident>) -> (String, cdrs::query::QueryValues) {
+                    pub fn #fn_name(&self, vec: std::vec::Vec<#enum_ident>) -> (String, cdrs_tokio::query::QueryValues) {
                         assert!(!vec.is_empty());
                         let mut query = vec![];
-                        let mut values: std::vec::Vec<cdrs::types::value::Value> = vec![];
+                        let mut values: std::vec::Vec<cdrs_tokio::types::value::Value> = vec![];
 
                         for ident in vec {
                             match ident {
@@ -137,7 +137,7 @@ pub(crate) fn generate(inf: &Inf, fn_name: &Ident, update: Update) -> TokenStrea
 
                         values.extend(self.where_clause_raw());
 
-                        let query_values = cdrs::query::QueryValues::SimpleValues(values);
+                        let query_values = cdrs_tokio::query::QueryValues::SimpleValues(values);
 
                         (update_statement, query_values)
                     }
