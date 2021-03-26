@@ -91,7 +91,7 @@ pub fn write_tests(
         // Only clean if the current package isn't the CI package, since that isn't possible
         // (removing the executable while executing the program)
         if package != package_name_currently_executing {
-            execute_command(fmt_and_fix, yml, whitespace, "clean", package, None);
+            execute_command(fmt_and_fix, yml, whitespace, "clean", package, None, true);
             execute_command(
                 fmt_and_fix,
                 yml,
@@ -99,12 +99,13 @@ pub fn write_tests(
                 "build",
                 package,
                 Some(vec!["--jobs=1"]),
+                true,
             );
         }
     };
 
     clean_and_build(yml);
-    execute_command(fmt_and_fix, yml, whitespace, "fmt", package, None);
+    execute_command(fmt_and_fix, yml, whitespace, "fmt", package, None, false);
     execute_command(
         fmt_and_fix,
         yml,
@@ -117,6 +118,7 @@ pub fn write_tests(
             "--allow-staged",
             "--jobs=1",
         ]),
+        false,
     );
     execute_command(
         fmt_and_fix,
@@ -127,6 +129,7 @@ pub fn write_tests(
         // Test threads is 1, because in tests sometimes tables be added, keyspace are being recreated,
         // if that all goes down at the same time, error will be thrown
         Some(vec!["--verbose", "--", "--test-threads=1"]),
+        true
     );
     execute_command(
         fmt_and_fix,
@@ -141,6 +144,7 @@ pub fn write_tests(
             "--allow-dirty",
             "--allow-staged",
         ]),
+        false,
     );
 
     // Clean and rebuild again, it's needed because else clippy doesn't pick up anything
@@ -152,6 +156,7 @@ pub fn write_tests(
         "clippy",
         package,
         Some(vec!["--", "-D", "warnings"]),
+        true
     );
 
     writeln!(yml).unwrap();
@@ -166,9 +171,9 @@ pub fn execute_command(
     command: &str,
     package: &str,
     extra_command: Option<Vec<&str>>,
+    for_ci: bool,
 ) {
     let mut args = vec![
-        "+nightly".to_string(),
         command.to_string(),
         "--package".to_string(),
         package.to_string(),
@@ -190,8 +195,10 @@ pub fn execute_command(
     let no_quotes = formatted.replace("\"", "");
     log::debug!("Executing command: {}", no_quotes);
 
-    writeln!(yml, "{}- name: {} {}", whitespace, command, package).unwrap();
-    writeln!(yml, "{}  run: {}", whitespace, no_quotes).unwrap();
+    if for_ci {
+        writeln!(yml, "{}- name: {} {}", whitespace, command, package).unwrap();
+        writeln!(yml, "{}  run: {}", whitespace, no_quotes).unwrap();
+    }
 
     if fmt_and_fix {
         let envs: HashMap<_, _> = std::env::vars().collect();

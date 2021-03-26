@@ -1,7 +1,7 @@
 use crate::{
     update_single_column, UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
-use crate::{DynamicMultipleUpdates, DynamicUpdate, Inf, Update, Writer, CRUD};
+use crate::{Crud, DynamicMultipleUpdates, DynamicUpdate, Inf, Update, Writer};
 use cdrs_con::capitalizing::snake_case_to_upper_camel_case;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -40,7 +40,7 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
             inf,
             &format_ident!("{}", UPDATE_SINGLE_COLUMN_DYNAMIC),
             &format_ident!("{}", writer.fn_name_update_column_dynamic()),
-            CRUD::UpdateUnique(Update::Dynamic(DynamicUpdate {
+            Crud::UpdateUnique(Update::Dynamic(DynamicUpdate {
                 updatable_columns: &idents,
                 updatable_columns_types: &ty,
                 enum_cases: &enum_cases,
@@ -60,14 +60,14 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", UPDATE_OPTIONALS),
         &format_ident!("{}", writer.fn_name_update_optionals()),
-        CRUD::UpdateUnique(Update::AllOptional((&idents, &optional_ty))),
+        Crud::UpdateUnique(Update::AllOptional((&idents, &optional_ty))),
     ));
 
     tokens.extend(writer.write(
         inf,
         &format_ident!("{}", UPDATE_MULTIPLE_COLUMNS),
         &format_ident!("{}", writer.fn_name_update_multiple_columns()),
-        CRUD::UpdateUnique(Update::DynamicVec(DynamicMultipleUpdates {
+        Crud::UpdateUnique(Update::DynamicVec(DynamicMultipleUpdates {
             enum_cases: &enum_cases,
             enum_column_names: &idents,
         })),
@@ -80,7 +80,7 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
             inf,
             &db_mirror_fn_name,
             &custom_fn_name,
-            CRUD::UpdateUnique(Update::SingleColumn((&ident, &ty))),
+            Crud::UpdateUnique(Update::SingleColumn((&ident, &ty))),
         ));
     }
 

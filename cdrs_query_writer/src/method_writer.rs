@@ -13,7 +13,7 @@ use syn::{DeriveInput, Field, Ident, Type};
 
 pub type UsingTTL = bool;
 
-pub enum CRUD<'a> {
+pub enum Crud<'a> {
     InsertUnique(UsingTTL),
     UpdateUnique(Update<'a>),
     SelectUnique,
@@ -78,7 +78,7 @@ pub trait Writer {
         inf: &Inf,
         db_mirror_fn_name: &Ident,
         custom_fn_name: &Ident,
-        crud: CRUD,
+        crud: Crud,
     ) -> TokenStream;
 
     fn post_process_ts(

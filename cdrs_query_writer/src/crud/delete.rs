@@ -1,4 +1,4 @@
-use crate::method_writer::{Inf, Writer, CRUD};
+use crate::method_writer::{Crud, Inf, Writer};
 use crate::DELETE_UNIQUE;
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -13,6 +13,6 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", &db_mirror_fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::DeleteUnique,
+        Crud::DeleteUnique,
     )
 }

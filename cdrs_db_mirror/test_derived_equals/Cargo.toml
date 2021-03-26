@@ -18,10 +18,10 @@ serde_json = "1.*"
 rand = "0.7.*"
 serde = "1.*"
 rand_derive2 = "0.1"
-cdrs-tokio-helpers-derive = { path = "../../../cdrs-tokio-helpers-derive" }
+cdrs-tokio-helpers-derive = { git = "https://github.com/Jasperav/cdrs-tokio-helpers-derive.git" }
 uuid = "0.8.*"
 dotenv = "0.15"
 log = "0.4"
 env_logger = "0.7"
 proc_macro2_helper = "0.2"
-cdrs-tokio = { path = "../../../cdrs-tokio" }
+cdrs-tokio = { git = "https://github.com/Jasperav/cdrs-tokio.git" }

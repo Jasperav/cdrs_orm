@@ -1,4 +1,4 @@
-use crate::{Inf, Writer, CRUD, TRUNCATE};
+use crate::{Crud, Inf, Writer, TRUNCATE};
 use proc_macro2::TokenStream;
 use quote::format_ident;
 
@@ -11,6 +11,6 @@ pub fn generate(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", &db_mirror_fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::Truncate,
+        Crud::Truncate,
     )
 }

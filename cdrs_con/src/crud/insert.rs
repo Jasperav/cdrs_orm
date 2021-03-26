@@ -40,7 +40,7 @@ impl CRUDOperation for Insert {
 impl Insert {
     fn x<'a>(&self, q: &'a str) -> &'a str {
         let error = |c: char| format!("Can not find '{}' in query {}", c, q);
-        let find = |c: char| q.find(c).unwrap_or_else(|| panic!(error(c)));
+        let find = |c: char| q.find(c).unwrap_or_else(|| panic!("{}", error(c)));
         let opening = find('(');
         let closing = find(')');
 
