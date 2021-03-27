@@ -1,4 +1,4 @@
-use crate::JSONMapping;
+use crate::JsonMapping;
 use proc_macro2::TokenStream;
 
 /// Custom transformations can be done by implementing this trait
@@ -23,7 +23,7 @@ pub trait Transformer {
     }
 
     /// Adds a way to add the JSON mapping to a property
-    fn json_mapping(&self, _table_name: &str, _column_name: &str) -> Option<JSONMapping> {
+    fn json_mapping(&self, _table_name: &str, _column_name: &str) -> Option<JsonMapping> {
         None
     }
 

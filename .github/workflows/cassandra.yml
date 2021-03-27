@@ -24,7 +24,7 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: rustfmt, clippy
        # crates
       - name: clean cdrs_orm_util
@@ -109,3 +109,116 @@ jobs:
         run: cargo clean --package cdrs_query_example
       - name: build cdrs_query_example
         run: cargo build --package cdrs_query_example --jobs=1
+      - name: test cdrs_query_example
+        run: cargo test --package cdrs_query_example --verbose -- --test-threads=1
+      - name: clean cdrs_query_example
+        run: cargo clean --package cdrs_query_example
+      - name: build cdrs_query_example
+        run: cargo build --package cdrs_query_example --jobs=1
+      - name: clippy cdrs_query_example
+        run: cargo clippy --package cdrs_query_example -- -D warnings
+
+      - name: clean cdrs_query_example_proc_macro
+        run: cargo clean --package cdrs_query_example_proc_macro
+      - name: build cdrs_query_example_proc_macro
+        run: cargo build --package cdrs_query_example_proc_macro --jobs=1
+      - name: test cdrs_query_example_proc_macro
+        run: cargo test --package cdrs_query_example_proc_macro --verbose -- --test-threads=1
+      - name: clean cdrs_query_example_proc_macro
+        run: cargo clean --package cdrs_query_example_proc_macro
+      - name: build cdrs_query_example_proc_macro
+        run: cargo build --package cdrs_query_example_proc_macro --jobs=1
+      - name: clippy cdrs_query_example_proc_macro
+        run: cargo clippy --package cdrs_query_example_proc_macro -- -D warnings
+
+      - name: clean cdrs_query_simple
+        run: cargo clean --package cdrs_query_simple
+      - name: build cdrs_query_simple
+        run: cargo build --package cdrs_query_simple --jobs=1
+      - name: test cdrs_query_simple
+        run: cargo test --package cdrs_query_simple --verbose -- --test-threads=1
+      - name: clean cdrs_query_simple
+        run: cargo clean --package cdrs_query_simple
+      - name: build cdrs_query_simple
+        run: cargo build --package cdrs_query_simple --jobs=1
+      - name: clippy cdrs_query_simple
+        run: cargo clippy --package cdrs_query_simple -- -D warnings
+
+      - name: clean cdrs_query_simple_example
+        run: cargo clean --package cdrs_query_simple_example
+      - name: build cdrs_query_simple_example
+        run: cargo build --package cdrs_query_simple_example --jobs=1
+      - name: test cdrs_query_simple_example
+        run: cargo test --package cdrs_query_simple_example --verbose -- --test-threads=1
+      - name: clean cdrs_query_simple_example
+        run: cargo clean --package cdrs_query_simple_example
+      - name: build cdrs_query_simple_example
+        run: cargo build --package cdrs_query_simple_example --jobs=1
+      - name: clippy cdrs_query_simple_example
+        run: cargo clippy --package cdrs_query_simple_example -- -D warnings
+
+      - name: clean example_db_mirror
+        run: cargo clean --package example_db_mirror
+      - name: build example_db_mirror
+        run: cargo build --package example_db_mirror --jobs=1
+      - name: test example_db_mirror
+        run: cargo test --package example_db_mirror --verbose -- --test-threads=1
+      - name: clean example_db_mirror
+        run: cargo clean --package example_db_mirror
+      - name: build example_db_mirror
+        run: cargo build --package example_db_mirror --jobs=1
+      - name: clippy example_db_mirror
+        run: cargo clippy --package example_db_mirror -- -D warnings
+
+      - name: clean example_impl_writer
+        run: cargo clean --package example_impl_writer
+      - name: build example_impl_writer
+        run: cargo build --package example_impl_writer --jobs=1
+      - name: test example_impl_writer
+        run: cargo test --package example_impl_writer --verbose -- --test-threads=1
+      - name: clean example_impl_writer
+        run: cargo clean --package example_impl_writer
+      - name: build example_impl_writer
+        run: cargo build --package example_impl_writer --jobs=1
+      - name: clippy example_impl_writer
+        run: cargo clippy --package example_impl_writer -- -D warnings
+
+      - name: clean custom_derive
+        run: cargo clean --package custom_derive
+      - name: build custom_derive
+        run: cargo build --package custom_derive --jobs=1
+      - name: test custom_derive
+        run: cargo test --package custom_derive --verbose -- --test-threads=1
+      - name: clean custom_derive
+        run: cargo clean --package custom_derive
+      - name: build custom_derive
+        run: cargo build --package custom_derive --jobs=1
+      - name: clippy custom_derive
+        run: cargo clippy --package custom_derive -- -D warnings
+
+      - name: clean cdrs_ci
+        run: cargo clean --package cdrs_ci
+      - name: build cdrs_ci
+        run: cargo build --package cdrs_ci --jobs=1
+      - name: test cdrs_ci
+        run: cargo test --package cdrs_ci --verbose -- --test-threads=1
+      - name: clean cdrs_ci
+        run: cargo clean --package cdrs_ci
+      - name: build cdrs_ci
+        run: cargo build --package cdrs_ci --jobs=1
+      - name: clippy cdrs_ci
+        run: cargo clippy --package cdrs_ci -- -D warnings
+
+      - name: test internal_ci
+        run: cargo test --package internal_ci --verbose -- --test-threads=1
+      - name: clippy internal_ci
+        run: cargo clippy --package internal_ci -- -D warnings
+
+      - name: Install cargo expand
+        run: cargo install cargo-expand
+      - name: clean test_derived_equals
+        run: cargo clean --package test_derived_equals
+      - name: build test_derived_equals
+        run: cargo build --package test_derived_equals --jobs=1
+      - name: test test_derived_equals
+        run: cargo test --package test_derived_equals --verbose -- --test-threads=1

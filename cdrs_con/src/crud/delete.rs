@@ -1,9 +1,9 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::{ExtractColumn, QueryType};
 
 pub(crate) struct Delete;
 
-impl CRUDOperation for Delete {
+impl CrudOperation for Delete {
     fn crud_query_start(&self) -> &'static str {
         "delete"
     }

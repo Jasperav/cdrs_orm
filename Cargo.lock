@@ -17,7 +17,7 @@ checksum = "36ea56748e10732c49404c153638a15ec3d6211ec5ff35d9bb20e13b93576adf"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -116,7 +116,7 @@ dependencies = [
 [[package]]
 name = "cdrs-tokio"
 version = "3.0.0"
-source = "git+https://github.com/Jasperav/cdrs-tokio.git#9c6e869639e922d0334cc1f971306ce33316c4a2"
+source = "git+https://github.com/Jasperav/cdrs-tokio.git#8125f69532fd0f6acdc02c94f8c3dc252b4a4ca4"
 dependencies = [
  "async-trait",
  "bb8",
@@ -127,6 +127,7 @@ dependencies = [
  "log",
  "lz4-compress",
  "rand 0.8.3",
+ "serde",
  "snap 1.0.4",
  "time 0.2.26",
  "tokio",
@@ -136,7 +137,7 @@ dependencies = [
 [[package]]
 name = "cdrs-tokio-helpers-derive"
 version = "2.0.0"
-source = "git+https://github.com/Jasperav/cdrs-tokio-helpers-derive.git#4419476c00a95bf497843fb4bdcdb9336a9c3cab"
+source = "git+https://github.com/Jasperav/cdrs-tokio-helpers-derive.git#525f8244945abc5ca395e7528241fcfc78cd4da7"
 dependencies = [
  "proc-macro2 0.1.10",
  "quote 0.3.15",
@@ -179,7 +180,7 @@ dependencies = [
  "rand_derive2",
  "serde",
  "serde_json",
- "syn 1.0.64",
+ "syn 1.0.65",
  "uuid",
 ]
 
@@ -211,7 +212,7 @@ dependencies = [
  "cdrs_con",
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -231,7 +232,7 @@ dependencies = [
  "cdrs_con",
  "cdrs_query",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -241,7 +242,7 @@ dependencies = [
  "cdrs_con",
  "cdrs_query",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -261,7 +262,7 @@ dependencies = [
  "proc-macro2 1.0.24",
  "proc_macro2_helper",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -275,7 +276,7 @@ dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
  "r2d2",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -310,7 +311,7 @@ dependencies = [
  "cdrs_query_writer",
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -678,12 +679,12 @@ dependencies = [
 
 [[package]]
 name = "proc_macro2_helper"
-version = "0.2.8"
+version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "142306861439a263d0a3b4bf67f110edab72a4e91370106f72b06d524d42695c"
+checksum = "de7d18393e9ef5104442cde71ea51a7fcca8e2dbba4285887176ce78da3ac799"
 dependencies = [
  "proc-macro2 1.0.24",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -818,7 +819,7 @@ dependencies = [
  "proc-macro2 1.0.24",
  "proc_macro2_helper",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -946,7 +947,7 @@ checksum = "b093b7a2bb58203b5da3056c05b4ec1fed827dcfdb37347a8841695263b3d06d"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -1027,7 +1028,7 @@ dependencies = [
  "quote 1.0.9",
  "serde",
  "serde_derive",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -1043,7 +1044,7 @@ dependencies = [
  "serde_derive",
  "serde_json",
  "sha1",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -1065,9 +1066,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "1.0.64"
+version = "1.0.65"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fd9d1e9976102a03c542daa2eff1b43f9d72306342f3f8b3ed5fb8908195d6f"
+checksum = "f3a1d708c221c5a612956ef9f75b37e454e88d1f7b899fbd3a18d4252012d663"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
@@ -1157,7 +1158,7 @@ dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
  "standback",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -1185,7 +1186,7 @@ checksum = "caf7b11a536f46a809a8a9f0bb4237020f70ecbf115b842360afb127ea2fda57"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
 ]
 
 [[package]]
@@ -1278,7 +1279,7 @@ dependencies = [
  "log",
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
  "wasm-bindgen-shared",
 ]
 
@@ -1300,7 +1301,7 @@ checksum = "96eb45c1b2ee33545a813a92dbb53856418bf7eb54ab34f7f7ff1448a5b3735d"
 dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.9",
- "syn 1.0.64",
+ "syn 1.0.65",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]

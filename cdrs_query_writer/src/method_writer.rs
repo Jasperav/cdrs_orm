@@ -11,10 +11,10 @@ use proc_macro2_helper::named_struct_fields_from_data;
 use quote::format_ident;
 use syn::{DeriveInput, Field, Ident, Type};
 
-pub type UsingTTL = bool;
+pub type UsingTtl = bool;
 
 pub enum Crud<'a> {
-    InsertUnique(UsingTTL),
+    InsertUnique(UsingTtl),
     UpdateUnique(Update<'a>),
     SelectUnique,
     SelectAll,

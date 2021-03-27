@@ -96,7 +96,14 @@ impl Parse for Query {
             cdrs_tokio::query::QueryValues::SimpleValues(query_values)
         }};
 
-        Ok(Query { query_raw, query_pretty, idents, types, qv, qmd })
+        Ok(Query {
+            query_raw,
+            query_pretty,
+            idents,
+            types,
+            qv,
+            qmd,
+        })
     }
 }
 

@@ -1,9 +1,9 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::{ColumnValue, ExtractColumn, QueryType};
 
 pub(crate) struct Select;
 
-impl CRUDOperation for Select {
+impl CrudOperation for Select {
     fn crud_query_start(&self) -> &'static str {
         "select"
     }

@@ -1,9 +1,9 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::{ColumnValue, ExtractColumn, QueryType};
 
 pub(crate) struct Insert;
 
-impl CRUDOperation for Insert {
+impl CrudOperation for Insert {
     fn crud_query_start(&self) -> &'static str {
         "insert"
     }

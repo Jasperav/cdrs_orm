@@ -129,22 +129,7 @@ pub fn write_tests(
         // Test threads is 1, because in tests sometimes tables be added, keyspace are being recreated,
         // if that all goes down at the same time, error will be thrown
         Some(vec!["--verbose", "--", "--test-threads=1"]),
-        true
-    );
-    execute_command(
-        fmt_and_fix,
-        yml,
-        whitespace,
-        "clippy",
-        package,
-        Some(vec![
-            "--fix",
-            "-Z",
-            "unstable-options",
-            "--allow-dirty",
-            "--allow-staged",
-        ]),
-        false,
+        true,
     );
 
     // Clean and rebuild again, it's needed because else clippy doesn't pick up anything
@@ -156,7 +141,7 @@ pub fn write_tests(
         "clippy",
         package,
         Some(vec!["--", "-D", "warnings"]),
-        true
+        true,
     );
 
     writeln!(yml).unwrap();

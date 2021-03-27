@@ -58,7 +58,6 @@ mod test {
                 .into_iter()
                 .collect::<Vec<_>>()
                 .join("")
-                
         };
 
         let target_replaced = replaced(&target_str);

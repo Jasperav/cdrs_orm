@@ -1,4 +1,4 @@
-use cdrs_query_writer::{Inf, Update, COLUMN_SEPARATOR, Crud};
+use cdrs_query_writer::{Crud, Inf, Update, COLUMN_SEPARATOR};
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 

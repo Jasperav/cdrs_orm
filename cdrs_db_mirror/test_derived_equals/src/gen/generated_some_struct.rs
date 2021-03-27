@@ -125,12 +125,26 @@ mod generated_some_struct {
                     cluster_key: ref __self_0_2,
                     another_cluster_key: ref __self_0_3,
                 } => {
-                    let mut debug_trait_builder = f.debug_struct("SomeStructPrimaryKey");
-                    let _ = debug_trait_builder.field("id", &&(*__self_0_0));
-                    let _ = debug_trait_builder.field("another_id", &&(*__self_0_1));
-                    let _ = debug_trait_builder.field("cluster_key", &&(*__self_0_2));
-                    let _ = debug_trait_builder.field("another_cluster_key", &&(*__self_0_3));
-                    debug_trait_builder.finish()
+                    let debug_trait_builder =
+                        &mut ::core::fmt::Formatter::debug_struct(f, "SomeStructPrimaryKey");
+                    let _ =
+                        ::core::fmt::DebugStruct::field(debug_trait_builder, "id", &&(*__self_0_0));
+                    let _ = ::core::fmt::DebugStruct::field(
+                        debug_trait_builder,
+                        "another_id",
+                        &&(*__self_0_1),
+                    );
+                    let _ = ::core::fmt::DebugStruct::field(
+                        debug_trait_builder,
+                        "cluster_key",
+                        &&(*__self_0_2),
+                    );
+                    let _ = ::core::fmt::DebugStruct::field(
+                        debug_trait_builder,
+                        "another_cluster_key",
+                        &&(*__self_0_3),
+                    );
+                    ::core::fmt::DebugStruct::finish(debug_trait_builder)
                 }
             }
         }
@@ -666,9 +680,9 @@ mod generated_some_struct {
         fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
             match (&*self,) {
                 (&SomeStructUpdatableColumns::Name(ref __self_0),) => {
-                    let mut debug_trait_builder = f.debug_tuple("Name");
-                    let _ = debug_trait_builder.field(&&(*__self_0));
-                    debug_trait_builder.finish()
+                    let debug_trait_builder = &mut ::core::fmt::Formatter::debug_tuple(f, "Name");
+                    let _ = ::core::fmt::DebugTuple::field(debug_trait_builder, &&(*__self_0));
+                    ::core::fmt::DebugTuple::finish(debug_trait_builder)
                 }
             }
         }
