@@ -1,6 +1,6 @@
 # This file is generated, don't edit
 
-name: tests-cassandra
+name: tests-scylladb
 
 on: push
 
@@ -13,8 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      cassandra:
-        image: cassandra
+      scylladb:
+        image: scylladb/scylla
         ports:
           - 9042:9042
         options: --health-cmd "cqlsh --debug" --health-interval 5s --health-retries 10
