@@ -136,7 +136,7 @@ fn comp_pb(left: &Path, right: &Path) {
     );
 }
 
-pub struct JSONMapping {
+pub struct JsonMapping {
     pub import: String,
     pub raw_type: proc_macro2::TokenStream,
     pub nullable: bool,
@@ -204,9 +204,9 @@ mod test {
         struct Trans;
 
         impl Transformer for Trans {
-            fn json_mapping(&self, _table_name: &str, column_name: &str) -> Option<JSONMapping> {
+            fn json_mapping(&self, _table_name: &str, column_name: &str) -> Option<JsonMapping> {
                 if column_name.contains("json") {
-                    return Some(JSONMapping {
+                    return Some(JsonMapping {
                         import: "crate::MyJsonType".to_string(),
                         raw_type: quote! {
                             MyJsonType

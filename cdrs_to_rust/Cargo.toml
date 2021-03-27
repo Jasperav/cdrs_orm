@@ -14,7 +14,7 @@ keywords = ["cassandra", "scylla", "scylladb", "orm", "nosql"]
 
 [dependencies]
 cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
-cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
+cdrs-tokio-helpers-derive = { git = "https://github.com/Jasperav/cdrs-tokio-helpers-derive.git" }
 quote = "1.0.*"
 syn = "1.0.*"
 r2d2 = "0.8.*"

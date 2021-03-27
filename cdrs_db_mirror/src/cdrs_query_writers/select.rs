@@ -27,8 +27,8 @@ pub fn generate_all(
         impl #name {
             pub const #query: &'static str = #select_all;
 
-            pub fn #fn_name() -> (&'static str, cdrs::query::QueryValues) {
-                (#name::#query, cdrs::query::QueryValues::SimpleValues(vec![]))
+            pub fn #fn_name() -> (&'static str, cdrs_tokio::query::QueryValues) {
+                (#name::#query, cdrs_tokio::query::QueryValues::SimpleValues(vec![]))
             }
         }
     }

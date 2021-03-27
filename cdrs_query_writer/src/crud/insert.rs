@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::format_ident;
 
-use crate::method_writer::{Inf, Writer, CRUD};
+use crate::method_writer::{Crud, Inf, Writer};
 use crate::{INSERT, INSERT_USING_TTL};
 
 /// Writes the unique insert query
@@ -37,6 +37,6 @@ fn generate_query(
         inf,
         &format_ident!("{}", &fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::InsertUnique(using_ttl),
+        Crud::InsertUnique(using_ttl),
     )
 }

@@ -26,6 +26,7 @@ pub const TEST_CDRS_DB_KEYSPACE: &str = "test_keyspace_for_testing";
 /// This is not an environment variable but the name of a table that is used for testing
 pub const TEST_TABLE: &str = "test_table";
 
+pub mod cdrs_tokio_transformer;
 pub mod crud;
 mod query_executor;
 pub mod supported_data_types;

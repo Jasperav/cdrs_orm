@@ -5,7 +5,7 @@ mod select;
 mod truncate;
 mod update;
 
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use delete::*;
 use insert::*;
 use select::*;
@@ -29,8 +29,8 @@ pub struct ColumnValue {
 pub type ExtractColumn = Vec<ColumnValue>;
 
 /// Dynamically choose from a given query the correct CRUD type
-pub(crate) fn create_query_crud(query: &str) -> Box<dyn CRUDOperation> {
-    let cruds: Vec<Box<dyn CRUDOperation>> = vec![
+pub(crate) fn create_query_crud(query: &str) -> Box<dyn CrudOperation> {
+    let cruds: Vec<Box<dyn CrudOperation>> = vec![
         Box::new(Select),
         Box::new(Update),
         Box::new(Insert),
@@ -78,7 +78,7 @@ pub enum QueryType {
 ///
 pub(crate) fn extract_table_name<'a, S: AsRef<str>>(
     query: &'a S,
-    crud: &'a dyn CRUDOperation,
+    crud: &'a dyn CrudOperation,
 ) -> &'a str {
     let index = query
         .as_ref()
@@ -108,7 +108,7 @@ pub(crate) fn extract_table_name<'a, S: AsRef<str>>(
 /// assert_eq!("a", &columns[2].column_name);
 /// assert_eq!(true, &columns[2].is_part_of_where_clause);
 ///
-pub(crate) fn extract_columns(query: &str, crud: &dyn CRUDOperation) -> ExtractColumn {
+pub(crate) fn extract_columns(query: &str, crud: &dyn CrudOperation) -> ExtractColumn {
     let (query, query_without_where) = split_query(query);
 
     crud.column_clauses(query_without_where)
@@ -288,7 +288,7 @@ fn test_columns_after_where() {
 
 #[test]
 fn test_extract_columns() {
-    let select: Box<dyn CRUDOperation> = Box::new(Select);
+    let select: Box<dyn CrudOperation> = Box::new(Select);
 
     let c = extract_columns(
         "select a, b as c, d from table where a = 1 and b > 2 and e in ? limit ?",

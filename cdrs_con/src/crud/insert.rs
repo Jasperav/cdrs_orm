@@ -1,9 +1,9 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::{ColumnValue, ExtractColumn, QueryType};
 
 pub(crate) struct Insert;
 
-impl CRUDOperation for Insert {
+impl CrudOperation for Insert {
     fn crud_query_start(&self) -> &'static str {
         "insert"
     }
@@ -40,7 +40,7 @@ impl CRUDOperation for Insert {
 impl Insert {
     fn x<'a>(&self, q: &'a str) -> &'a str {
         let error = |c: char| format!("Can not find '{}' in query {}", c, q);
-        let find = |c: char| q.find(c).unwrap_or_else(|| panic!(error(c)));
+        let find = |c: char| q.find(c).unwrap_or_else(|| panic!("{}", error(c)));
         let opening = find('(');
         let closing = find(')');
 

@@ -13,7 +13,7 @@ cdrs_to_rust = { path = "../../cdrs_to_rust" }
 
 [dependencies]
 custom_derive = { path = "custom_derive" }
-cdrs = { git = "https://github.com/Jasperav/cdrs.git" }
+cdrs-tokio = { git = "https://github.com/Jasperav/cdrs-tokio.git" }
 cdrs_db_mirror = { path = ".." }
 uuid = { version = "0.8.1", features = ["v4"] }
 quote = "1.0.*"
@@ -23,4 +23,4 @@ serde_json = "1.0.*"
 serde = "1.0.*"
 rand = "0.7.*"
 rand_derive2 = "0.1"
-cdrs_helpers_derive = { git = "https://github.com/Jasperav/cdrs-helpers-derive.git" }
+cdrs-tokio-helpers-derive = { git = "https://github.com/Jasperav/cdrs-tokio-helpers-derive.git" }

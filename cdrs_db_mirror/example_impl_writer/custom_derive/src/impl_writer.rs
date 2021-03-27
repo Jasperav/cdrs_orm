@@ -1,4 +1,4 @@
-use cdrs_query_writer::{Inf, Update, COLUMN_SEPARATOR, CRUD};
+use cdrs_query_writer::{Crud, Inf, Update, COLUMN_SEPARATOR};
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
@@ -36,7 +36,7 @@ impl cdrs_query_writer::Writer for ImplWriter {
         inf: &Inf,
         db_mirror_fn_name: &Ident,
         custom_fn_name: &Ident,
-        crud: CRUD,
+        crud: Crud,
     ) -> TokenStream {
         let db_mirror_fn_name_str = db_mirror_fn_name.to_string();
         let custom_fn_name_str = custom_fn_name.to_string();
@@ -49,7 +49,7 @@ impl cdrs_query_writer::Writer for ImplWriter {
         }
 
         match crud {
-            CRUD::UpdateUnique(update) => {
+            Crud::UpdateUnique(update) => {
                 match update {
                     Update::SingleColumn((_, _)) => {
                         assert!(db_mirror_fn_name_str
@@ -66,26 +66,26 @@ impl cdrs_query_writer::Writer for ImplWriter {
                     }
                 }
             }
-            CRUD::InsertUnique(using_ttl) => {
+            Crud::InsertUnique(using_ttl) => {
                 if using_ttl {
                     check!(INSERT_USING_TTL);
                 } else {
                     check!(INSERT);
                 }
             }
-            CRUD::SelectUnique => {
+            Crud::SelectUnique => {
                 check!(SELECT_UNIQUE);
             }
-            CRUD::DeleteUnique => {
+            Crud::DeleteUnique => {
                 check!(DELETE_UNIQUE);
             }
-            CRUD::SelectAll => {
+            Crud::SelectAll => {
                 check!(SELECT_ALL);
             }
-            CRUD::SelectAllCount => {
+            Crud::SelectAllCount => {
                 check!(SELECT_ALL_COUNT);
             }
-            CRUD::Truncate => {
+            Crud::Truncate => {
                 check!(TRUNCATE);
             }
         }

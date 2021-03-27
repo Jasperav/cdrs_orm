@@ -1,4 +1,4 @@
-use cdrs_query_writer::{Inf, Writer, CRUD};
+use cdrs_query_writer::{Crud, Inf, Writer};
 use proc_macro2::{Ident, TokenStream};
 use quote::format_ident;
 use syn::DeriveInput;
@@ -30,34 +30,34 @@ impl Writer for ImplWriter {
         inf: &Inf,
         db_mirror_fn_name: &Ident,
         _custom_fn_name: &Ident,
-        crud: CRUD,
+        crud: Crud,
     ) -> proc_macro2::TokenStream {
         match crud {
-            CRUD::InsertUnique(using_ttl) => {
+            Crud::InsertUnique(using_ttl) => {
                 crate::cdrs_query_writers::insert::generate(inf, db_mirror_fn_name, using_ttl)
             }
-            CRUD::UpdateUnique(update) => {
+            Crud::UpdateUnique(update) => {
                 crate::cdrs_query_writers::update::generate(inf, db_mirror_fn_name, update)
             }
-            CRUD::DeleteUnique => {
+            Crud::DeleteUnique => {
                 crate::cdrs_query_writers::delete::generate(inf, db_mirror_fn_name)
             }
-            CRUD::SelectUnique => {
+            Crud::SelectUnique => {
                 crate::cdrs_query_writers::select::generate_unique(inf, db_mirror_fn_name)
             }
-            CRUD::SelectAll => crate::cdrs_query_writers::select::generate_all(
+            Crud::SelectAll => crate::cdrs_query_writers::select::generate_all(
                 inf,
                 db_mirror_fn_name,
                 "*",
                 "SELECT_ALL_QUERY",
             ),
-            CRUD::SelectAllCount => crate::cdrs_query_writers::select::generate_all(
+            Crud::SelectAllCount => crate::cdrs_query_writers::select::generate_all(
                 inf,
                 db_mirror_fn_name,
                 "count(*)",
                 "SELECT_ALL_COUNT_QUERY",
             ),
-            CRUD::Truncate => crate::cdrs_query_writers::truncate::generate(inf, db_mirror_fn_name),
+            Crud::Truncate => crate::cdrs_query_writers::truncate::generate(inf, db_mirror_fn_name),
         }
     }
 }

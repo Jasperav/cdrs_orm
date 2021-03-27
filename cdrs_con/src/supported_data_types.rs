@@ -35,7 +35,7 @@ impl CassandraDataType {
             "double" => CassandraDataType::Double,
             "uuid" => CassandraDataType::Uuid,
             "counter" => CassandraDataType::Counter,
-            _ => panic!(format!("Unexpected type: {}, please add this type", from)),
+            _ => panic!("Unexpected type: {}, please add this type", from),
         }
     }
 

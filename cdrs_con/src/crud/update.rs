@@ -1,9 +1,9 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::{ColumnValue, ExtractColumn, QueryType};
 
 pub(crate) struct Update;
 
-impl CRUDOperation for Update {
+impl CrudOperation for Update {
     fn crud_query_start(&self) -> &'static str {
         "update"
     }

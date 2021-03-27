@@ -1,7 +1,7 @@
 use crate::crud::{ExtractColumn, QueryType};
 
 /// Trait that is implemented for every CRUD operation
-pub(crate) trait CRUDOperation {
+pub(crate) trait CrudOperation {
     /// Is either insert, select, update or delete
     /// Based on this value, the correct CRUD operation can be determined from a query
     fn crud_query_start(&self) -> &'static str;

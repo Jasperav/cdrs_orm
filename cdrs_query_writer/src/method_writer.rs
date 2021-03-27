@@ -11,10 +11,10 @@ use proc_macro2_helper::named_struct_fields_from_data;
 use quote::format_ident;
 use syn::{DeriveInput, Field, Ident, Type};
 
-pub type UsingTTL = bool;
+pub type UsingTtl = bool;
 
-pub enum CRUD<'a> {
-    InsertUnique(UsingTTL),
+pub enum Crud<'a> {
+    InsertUnique(UsingTtl),
     UpdateUnique(Update<'a>),
     SelectUnique,
     SelectAll,
@@ -78,7 +78,7 @@ pub trait Writer {
         inf: &Inf,
         db_mirror_fn_name: &Ident,
         custom_fn_name: &Ident,
-        crud: CRUD,
+        crud: Crud,
     ) -> TokenStream;
 
     fn post_process_ts(

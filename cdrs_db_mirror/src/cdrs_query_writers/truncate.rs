@@ -13,8 +13,8 @@ pub fn generate(inf: &Inf, fn_name: &Ident) -> TokenStream {
         impl #name {
             pub const TRUNCATE_QUERY: &'static str = #query;
 
-            pub fn #fn_name() -> (&'static str, cdrs::query::QueryValues) {
-                (#name::TRUNCATE_QUERY, cdrs::query::QueryValues::SimpleValues(vec![]))
+            pub fn #fn_name() -> (&'static str, cdrs_tokio::query::QueryValues) {
+                (#name::TRUNCATE_QUERY, cdrs_tokio::query::QueryValues::SimpleValues(vec![]))
             }
         }
     }

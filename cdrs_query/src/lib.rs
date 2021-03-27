@@ -84,7 +84,7 @@ impl Parse for Query {
             .unzip();
 
         let qv = quote! {{
-            let mut query_values: Vec<cdrs::types::value::Value> = Vec::new();
+            let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::new();
 
             #(
                 // Check if the type is correct
@@ -93,7 +93,7 @@ impl Parse for Query {
                 query_values.push(#idents.clone().into());
             )*
 
-            cdrs::query::QueryValues::SimpleValues(query_values)
+            cdrs_tokio::query::QueryValues::SimpleValues(query_values)
         }};
 
         Ok(Query {
@@ -101,8 +101,8 @@ impl Parse for Query {
             query_pretty,
             idents,
             types,
-            qmd,
             qv,
+            qmd,
         })
     }
 }

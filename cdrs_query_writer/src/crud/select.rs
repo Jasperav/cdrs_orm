@@ -1,4 +1,4 @@
-use crate::method_writer::{Inf, Writer, CRUD};
+use crate::method_writer::{Crud, Inf, Writer};
 use crate::{SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE};
 use proc_macro2::TokenStream;
 use quote::format_ident;
@@ -24,7 +24,7 @@ fn write_unique(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", &db_mirror_fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::SelectUnique,
+        Crud::SelectUnique,
     )
 }
 
@@ -36,7 +36,7 @@ fn write_all(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", &db_mirror_fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::SelectAll,
+        Crud::SelectAll,
     )
 }
 
@@ -49,6 +49,6 @@ fn write_all_count(inf: &Inf, writer: &impl Writer) -> TokenStream {
         inf,
         &format_ident!("{}", &db_mirror_fn_name),
         &format_ident!("{}", &custom_fn_name),
-        CRUD::SelectAllCount,
+        Crud::SelectAllCount,
     )
 }

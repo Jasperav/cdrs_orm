@@ -1,10 +1,10 @@
-use crate::crud::crud_operation::CRUDOperation;
+use crate::crud::crud_operation::CrudOperation;
 use crate::crud::ExtractColumn;
 use crate::QueryType;
 
 pub(crate) struct Truncate;
 
-impl CRUDOperation for Truncate {
+impl CrudOperation for Truncate {
     fn crud_query_start(&self) -> &'static str {
         "truncate"
     }
