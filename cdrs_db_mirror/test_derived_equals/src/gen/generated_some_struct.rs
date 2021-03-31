@@ -15,7 +15,7 @@ mod generated_some_struct {
         pub const SELECT_UNIQUE_QUERY : & 'static str = "select * from some_struct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
     }
     impl SomeStructPrimaryKey {
-        pub fn select_unique_qv(&self) -> (&'static str, cdrs_tokio::query::QueryValues) {
+        pub fn select_unique_qv(self) -> (&'static str, cdrs_tokio::query::QueryValues) {
             (SomeStruct::SELECT_UNIQUE_QUERY, self.where_clause())
         }
     }
@@ -576,8 +576,8 @@ mod generated_some_struct {
     }
     impl cdrs_tokio::types::prelude::TryFromRow for SomeStructPrimaryKey {
         fn try_from_row(cdrs: cdrs_tokio::types::rows::Row) -> cdrs_tokio::Result<Self> {
-            use cdrs_tokio::frame::TryFromUDT;
-            use cdrs_tokio::types::from_cdrs::FromCDRSByName;
+            use cdrs_tokio::frame::TryFromUdt;
+            use cdrs_tokio::types::from_cdrs::FromCdrsByName;
             use cdrs_tokio::types::AsRustType;
             Ok(SomeStructPrimaryKey {
                 id: i32::from_cdrs_r(&cdrs, " id ".trim())?,
@@ -588,7 +588,15 @@ mod generated_some_struct {
         }
     }
     impl SomeStruct {
-        pub fn primary_key(&self) -> SomeStructPrimaryKey {
+        pub fn primary_key(self) -> SomeStructPrimaryKey {
+            SomeStructPrimaryKey {
+                id: self.id,
+                another_id: self.another_id,
+                cluster_key: self.cluster_key,
+                another_cluster_key: self.another_cluster_key,
+            }
+        }
+        pub fn clone_primary_key(&self) -> SomeStructPrimaryKey {
             SomeStructPrimaryKey {
                 id: self.id.clone(),
                 another_id: self.another_id.clone(),
@@ -600,57 +608,51 @@ mod generated_some_struct {
     impl SomeStructPrimaryKey {
         pub const WHERE_CLAUSE_PK: &'static str =
             " where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?";
-        pub fn where_clause(&self) -> cdrs_tokio::query::QueryValues {
+        pub fn where_clause(self) -> cdrs_tokio::query::QueryValues {
             cdrs_tokio::query::QueryValues::SimpleValues(self.where_clause_raw())
         }
-        pub fn where_clause_raw(&self) -> Vec<cdrs_tokio::types::value::Value> {
+        pub fn where_clause_raw(self) -> Vec<cdrs_tokio::types::value::Value> {
             use std::iter::FromIterator;
-            let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::new();
-            query_values.push(cdrs_tokio::types::value::Value::new_normal(self.id.clone()));
+            let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::with_capacity(4usize);
+            query_values.push(cdrs_tokio::types::value::Value::new_normal(self.id));
+            query_values.push(cdrs_tokio::types::value::Value::new_normal(self.another_id));
             query_values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.another_id.clone(),
+                self.cluster_key,
             ));
             query_values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.cluster_key.clone(),
-            ));
-            query_values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.another_cluster_key.clone(),
+                self.another_cluster_key,
             ));
             query_values
         }
     }
     impl SomeStruct {
         pub const INSERT_QUERY : & 'static str = "insert into some_struct (id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?)" ;
-        pub fn query_values(&self) -> cdrs_tokio::query::QueryValues {
+        pub fn query_values(self) -> cdrs_tokio::query::QueryValues {
             cdrs_tokio::query::QueryValues::SimpleValues(self.simple_values())
         }
-        pub fn insert_qv(&self) -> (&'static str, cdrs_tokio::query::QueryValues) {
+        pub fn insert_qv(self) -> (&'static str, cdrs_tokio::query::QueryValues) {
             (SomeStruct::INSERT_QUERY, self.query_values())
         }
     }
     impl SomeStruct {
-        fn simple_values(&self) -> Vec<cdrs_tokio::types::value::Value> {
-            let mut values: Vec<cdrs_tokio::types::value::Value> = Vec::new();
-            values.push(cdrs_tokio::types::value::Value::new_normal(self.id.clone()));
+        fn simple_values(self) -> Vec<cdrs_tokio::types::value::Value> {
+            let mut values: Vec<cdrs_tokio::types::value::Value> = Vec::with_capacity(5usize);
+            values.push(cdrs_tokio::types::value::Value::new_normal(self.id));
+            values.push(cdrs_tokio::types::value::Value::new_normal(self.another_id));
             values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.another_id.clone(),
+                self.cluster_key,
             ));
             values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.cluster_key.clone(),
+                self.another_cluster_key,
             ));
-            values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.another_cluster_key.clone(),
-            ));
-            values.push(cdrs_tokio::types::value::Value::new_normal(
-                self.name.clone(),
-            ));
+            values.push(cdrs_tokio::types::value::Value::new_normal(self.name));
             values
         }
     }
     impl SomeStruct {
         pub const INSERT_QUERY_USING_TTL : & 'static str = "insert into some_struct (id, another_id, cluster_key, another_cluster_key, name) values (?, ?, ?, ?, ?) using ttl ?" ;
         pub fn insert_qv_using_ttl(
-            &self,
+            self,
             using_ttl: i32,
         ) -> (&'static str, cdrs_tokio::query::QueryValues) {
             let mut values = self.simple_values();
@@ -689,7 +691,7 @@ mod generated_some_struct {
     }
     impl SomeStructPrimaryKey {
         pub fn update_dyn_qv(
-            &self,
+            self,
             dyn_column: SomeStructUpdatableColumns,
         ) -> (&'static str, cdrs_tokio::query::QueryValues) {
             match dyn_column {
@@ -699,7 +701,7 @@ mod generated_some_struct {
     }
     impl SomeStructPrimaryKey {
         pub fn update_qv(
-            &self,
+            self,
             name: std::option::Option<String>,
         ) -> std::option::Option<(String, cdrs_tokio::query::QueryValues)> {
             let mut to_update: Vec<String> = std::vec::Vec::new();
@@ -759,7 +761,7 @@ mod generated_some_struct {
     }
     impl SomeStructPrimaryKey {
         pub fn update_multiple_qv(
-            &self,
+            self,
             vec: std::vec::Vec<SomeStructUpdatableColumns>,
         ) -> (String, cdrs_tokio::query::QueryValues) {
             if !!vec.is_empty() {
@@ -804,7 +806,7 @@ mod generated_some_struct {
     }
     impl SomeStructPrimaryKey {
         pub fn update_qv_name(
-            &self,
+            self,
             name: String,
         ) -> (&'static str, cdrs_tokio::query::QueryValues) {
             let mut values = self.where_clause_raw();
@@ -819,7 +821,7 @@ mod generated_some_struct {
         pub const DELETE_UNIQUE_QUERY : & 'static str = "delete from some_struct where id = ? and another_id = ? and cluster_key = ? and another_cluster_key = ?" ;
     }
     impl SomeStructPrimaryKey {
-        pub fn delete_unique_qv(&self) -> (&'static str, cdrs_tokio::query::QueryValues) {
+        pub fn delete_unique_qv(self) -> (&'static str, cdrs_tokio::query::QueryValues) {
             (SomeStruct::DELETE_UNIQUE_QUERY, self.where_clause())
         }
     }

@@ -8,6 +8,7 @@ mod test {
         let t = trybuild::TestCases::new();
         let current_dir = std::env::current_dir().unwrap().join("src");
 
+        t.compile_fail(current_dir.join("failing_use_after_query_invoked.rs"));
         t.compile_fail(current_dir.join("failing_wrong_type_primitive.rs"));
         t.compile_fail(current_dir.join("failing_wrong_type_vec.rs"));
         t.compile_fail(current_dir.join("non_complete_insert.rs"));
@@ -60,20 +61,26 @@ mod test {
         control!("select * from another_test_table where a = 1 and b = ?", b);
 
         let a = vec![1, 2, 3];
-        let (_, values) = control!("select * from test_table where b = 1 and c in ?", a);
+        let cloned = a.clone();
+        let (_, values) = control!("select * from test_table where b = 1 and c in ?", cloned);
 
         assert_eq!(query_values!(a), values);
 
         let a = vec![1, 2];
-        control!("select * from test_table where b = 1 and c in ? limit 1", a);
+        let cloned = a.clone();
+        control!(
+            "select * from test_table where b = 1 and c in ? limit 1",
+            cloned
+        );
 
         let val = 1;
         let c = 5;
+        let cloned = a.clone();
 
         let (_, values) = control!(
             "select * from test_table where b = ? and c in ? limit ?",
             c,
-            a,
+            cloned,
             val
         );
 
