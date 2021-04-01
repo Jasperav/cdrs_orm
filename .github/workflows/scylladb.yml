@@ -1,6 +1,6 @@
 # This file is generated, don't edit
 
-name: tests-cassandra
+name: tests-scylladb
 
 on: push
 
@@ -13,8 +13,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     services:
-      cassandra:
-        image: cassandra
+      scylladb:
+        image: scylladb/scylla
         ports:
           - 9042:9042
         options: --health-cmd "cqlsh --debug" --health-interval 5s --health-retries 10
@@ -26,7 +26,7 @@ jobs:
           profile: minimal
           toolchain: stable
           components: rustfmt, clippy
-      # crates
+       # crates
       - name: clean cdrs_orm_util
         run: cargo clean --package cdrs_orm_util
       - name: build cdrs_orm_util
@@ -216,3 +216,4 @@ jobs:
 
       - name: Install cargo expand
         run: cargo install cargo-expand
+
