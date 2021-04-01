@@ -90,7 +90,7 @@ impl Parse for Query {
                 // Check if the type is correct
                 debug_assert!((#types_comparison::from(#idents.clone()), true).1);
 
-                query_values.push(#idents.clone().into());
+                query_values.push(#idents.into());
             )*
 
             cdrs_tokio::query::QueryValues::SimpleValues(query_values)

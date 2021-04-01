@@ -31,14 +31,13 @@ pub fn write_select_or_delete(
         #pk_struct
     })
     .unwrap();
-    let _p = &inf.pk_parameter;
 
     quote! {
         impl #name {
             pub const #const_name: &'static str = #query;
         }
         impl #pk_struct {
-            pub fn #fn_name(&self) -> (&'static str, cdrs_tokio::query::QueryValues) {
+            pub fn #fn_name(self) -> (&'static str, cdrs_tokio::query::QueryValues) {
                 (#name::#const_name, self.where_clause())
             }
         }

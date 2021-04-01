@@ -72,6 +72,10 @@ pub fn pk_parameter() -> Ident {
     format_ident!("primary_key")
 }
 
+pub fn pk_parameter_cloned() -> Ident {
+    format_ident!("clone_primary_key")
+}
+
 pub fn where_pk_query_from_fields(fields: &[Field]) -> String {
     let (partition_fields, mut clustering_fields, _) = read_attributes(fields);
 

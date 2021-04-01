@@ -1,7 +1,8 @@
 use crate::{
-    pk_parameter, pk_struct, read_attributes, updatable_columns_enum, COLUMN_SEPARATOR,
-    DELETE_UNIQUE, INSERT, INSERT_USING_TTL, SELECT_ALL, SELECT_ALL_COUNT, SELECT_UNIQUE, TRUNCATE,
-    UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN, UPDATE_SINGLE_COLUMN_DYNAMIC,
+    pk_parameter, pk_parameter_cloned, pk_struct, read_attributes, updatable_columns_enum,
+    COLUMN_SEPARATOR, DELETE_UNIQUE, INSERT, INSERT_USING_TTL, SELECT_ALL, SELECT_ALL_COUNT,
+    SELECT_UNIQUE, TRUNCATE, UPDATE_MULTIPLE_COLUMNS, UPDATE_OPTIONALS, UPDATE_SINGLE_COLUMN,
+    UPDATE_SINGLE_COLUMN_DYNAMIC,
 };
 use cdrs_con::capitalizing::struct_name_to_db_table_name;
 use cdrs_con::create_test_db_session;
@@ -56,6 +57,7 @@ pub struct Inf<'a> {
     pub table_name: &'a str,
     pub pk_struct: Ident,
     pub pk_parameter: Ident,
+    pub pk_parameter_cloned: Ident,
     pub fields: Vec<Field>,
     pub updatable_columns_enum: Ident,
     pub updatable_columns_enum_parameter: Ident,
@@ -166,6 +168,7 @@ pub fn write(derive: DeriveInput, writer: impl Writer) -> TokenStream {
         table_name: &table_name,
         pk_struct,
         pk_parameter: pk_parameter(),
+        pk_parameter_cloned: pk_parameter_cloned(),
         fields: fields.clone(),
         updatable_columns_enum,
         updatable_columns_enum_parameter: format_ident!("dyn_column"),

@@ -12,17 +12,17 @@ pub fn generate(inf: &Inf) -> TokenStream {
     let name = inf.name;
     let pk_struct = &inf.pk_struct;
     let pk_parameter = &inf.pk_parameter;
+    let pk_parameter_cloned = &inf.pk_parameter_cloned;
     let idents = inf
         .pk_fields
         .iter()
         .map(|p| p.ident.clone().unwrap())
         .collect::<Vec<_>>();
-
     let mut properties = TokenStream::new();
-    let mut mapping = TokenStream::new();
+    let mut mapping_with_self = TokenStream::new();
+    let mut mapping_without_self = TokenStream::new();
 
     for pk in inf.pk_fields.iter() {
-        // TODO: Can this be done without clone?
         let ident = pk.ident.clone().unwrap();
         let ty = &pk.ty;
 
@@ -36,7 +36,11 @@ pub fn generate(inf: &Inf) -> TokenStream {
             pub #ident: #ty,
         });
 
-        mapping.extend(quote! {
+        mapping_with_self.extend(quote! {
+           #ident: self.#ident,
+        });
+
+        mapping_without_self.extend(quote! {
            #ident: self.#ident.clone(),
         });
     }
@@ -60,6 +64,7 @@ pub fn generate(inf: &Inf) -> TokenStream {
 
     let where_clause_query = cdrs_query_writer::where_pk_query_from_idents(&idents);
     let where_clause_pk = primary_key();
+    let idents_len = idents.len();
 
     quote! {
         #[derive(#(#derives),*)]
@@ -68,9 +73,15 @@ pub fn generate(inf: &Inf) -> TokenStream {
         }
 
         impl #name {
-            pub fn #pk_parameter(&self) -> #pk_struct {
+            pub fn #pk_parameter(self) -> #pk_struct {
                 #pk_struct {
-                    #mapping
+                    #mapping_with_self
+                }
+            }
+
+            pub fn #pk_parameter_cloned(&self) -> #pk_struct {
+                #pk_struct {
+                    #mapping_without_self
                 }
             }
         }
@@ -78,17 +89,17 @@ pub fn generate(inf: &Inf) -> TokenStream {
         impl #pk_struct {
             pub const #where_clause_pk: &'static str = #where_clause_query;
 
-            pub fn where_clause(&self) -> cdrs_tokio::query::QueryValues {
+            pub fn where_clause(self) -> cdrs_tokio::query::QueryValues {
                 cdrs_tokio::query::QueryValues::SimpleValues(self.where_clause_raw())
             }
 
-            pub fn where_clause_raw(&self) -> Vec<cdrs_tokio::types::value::Value> {
+            pub fn where_clause_raw(self) -> Vec<cdrs_tokio::types::value::Value> {
                 use std::iter::FromIterator;
 
-                let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::new();
+                let mut query_values: Vec<cdrs_tokio::types::value::Value> = Vec::with_capacity(#idents_len);
 
                 #(
-                    query_values.push(cdrs_tokio::types::value::Value::new_normal(self.#idents.clone()));
+                    query_values.push(cdrs_tokio::types::value::Value::new_normal(self.#idents));
                 )*
 
                 query_values
