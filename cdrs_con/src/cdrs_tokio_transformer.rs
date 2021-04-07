@@ -59,7 +59,7 @@ pub fn rows_tokio<T: cdrs_tokio::frame::TryFromRow>(result: cdrs::Result<Frame>)
     let frame = frame_sync_to_tokio(result.expect("Failed to execute query"));
 
     frame
-        .get_body()
+        .body()
         .expect("Failed to get body")
         .into_rows()
         .expect("Failed to turn into rows")
