@@ -122,7 +122,7 @@ pub fn generate(base_dir: &Path, transformer: impl Transformer, imports: TokenSt
 pub fn add_generated_header(file: &mut File) {
     assert_eq!(0, file.metadata().unwrap().len());
 
-    writeln!(file, "// @generated, do not editt").unwrap();
+    writeln!(file, "// @generated, do not edit").unwrap();
 }
 
 fn comp_pb(left: &Path, right: &Path) {

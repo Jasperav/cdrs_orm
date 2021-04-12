@@ -1,4 +1,4 @@
-// @generated, do not editt
+// @generated, do not edit
 #[derive(cdrs_db_mirror :: DBMirror, cdrs_tokio_helpers_derive :: TryFromRow)]
 pub struct test2 {
     #[partition_key]
