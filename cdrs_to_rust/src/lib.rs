@@ -111,18 +111,29 @@ pub fn generate(base_dir: &Path, transformer: impl Transformer, imports: TokenSt
         write!(file, "{}", struct_tokens).unwrap();
 
         // Format the output, since everything is on 1 line
-        Command::new("rustfmt")
+        assert!(Command::new("rustfmt")
             .arg(format!("{}.rs", table))
             .current_dir(base_dir)
-            .output()
-            .unwrap();
+            .status()
+            .unwrap()
+            .success());
     }
+
+    drop(mod_file);
+
+    // Format the output, since everything is on 1 line
+    assert!(Command::new("rustfmt")
+        .arg("mod.rs")
+        .current_dir(base_dir)
+        .status()
+        .unwrap()
+        .success());
 }
 
 pub fn add_generated_header(file: &mut File) {
     assert_eq!(0, file.metadata().unwrap().len());
 
-    writeln!(file, "// @generated, do not edit").unwrap();
+    writeln!(file, "// Generated file").unwrap();
 }
 
 fn comp_pb(left: &Path, right: &Path) {

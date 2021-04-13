@@ -1,4 +1,4 @@
-// @generated, do not edit
+// Generated file
 use crate::MyJsonType;
 #[derive(cdrs_db_mirror :: DBMirror, cdrs_tokio_helpers_derive :: TryFromRow)]
 pub struct testjsonmapping {
