@@ -1,4 +1,4 @@
-// @generated, do not edit
+"#![allow(unknown_lints)]\n#![allow(clippy::all)]\n#![rustfmt::skip]\n#![allow(unused_attributes)]\n// @generated, do not edit"
 use crate::MyJsonType;
 #[derive(cdrs_db_mirror :: DBMirror, cdrs_tokio_helpers_derive :: TryFromRow)]
 pub struct testjsonmapping {

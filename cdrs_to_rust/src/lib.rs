@@ -122,7 +122,7 @@ pub fn generate(base_dir: &Path, transformer: impl Transformer, imports: TokenSt
 pub fn add_generated_header(file: &mut File) {
     assert_eq!(0, file.metadata().unwrap().len());
 
-    writeln!(file, "// @generated, do not edit").unwrap();
+    writeln!(file, ""#![allow(unknown_lints)]\n#![allow(clippy::all)]\n#![rustfmt::skip]\n#![allow(unused_attributes)]\n// @generated, do not edit"").unwrap();
 }
 
 fn comp_pb(left: &Path, right: &Path) {
