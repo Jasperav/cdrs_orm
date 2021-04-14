@@ -216,4 +216,16 @@ jobs:
 
       - name: Install cargo expand
         run: cargo install cargo-expand
+      - name: clean test_derived_equals
+        run: cargo clean --package test_derived_equals
+      - name: build test_derived_equals
+        run: cargo build --package test_derived_equals --jobs=1
+      - name: test test_derived_equals
+        run: cargo test --package test_derived_equals --verbose -- --test-threads=1
+      - name: clean test_derived_equals
+        run: cargo clean --package test_derived_equals
+      - name: build test_derived_equals
+        run: cargo build --package test_derived_equals --jobs=1
+      - name: clippy test_derived_equals
+        run: cargo clippy --package test_derived_equals -- -D warnings
 

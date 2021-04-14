@@ -160,8 +160,8 @@ mod generated_some_struct {
                 &self,
                 __serializer: __S,
             ) -> _serde::__private::Result<__S::Ok, __S::Error>
-                where
-                    __S: _serde::Serializer,
+            where
+                __S: _serde::Serializer,
             {
                 let mut __serde_state = match _serde::Serializer::serialize_struct(
                     __serializer,
@@ -225,8 +225,8 @@ mod generated_some_struct {
         #[automatically_derived]
         impl<'de> _serde::Deserialize<'de> for SomeStructPrimaryKey {
             fn deserialize<__D>(__deserializer: __D) -> _serde::__private::Result<Self, __D::Error>
-                where
-                    __D: _serde::Deserializer<'de>,
+            where
+                __D: _serde::Deserializer<'de>,
             {
                 #[allow(non_camel_case_types)]
                 enum __Field {
@@ -249,8 +249,8 @@ mod generated_some_struct {
                         self,
                         __value: u64,
                     ) -> _serde::__private::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             0u64 => _serde::__private::Ok(__Field::__field0),
@@ -264,8 +264,8 @@ mod generated_some_struct {
                         self,
                         __value: &str,
                     ) -> _serde::__private::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             "id" => _serde::__private::Ok(__Field::__field0),
@@ -279,8 +279,8 @@ mod generated_some_struct {
                         self,
                         __value: &[u8],
                     ) -> _serde::__private::Result<Self::Value, __E>
-                        where
-                            __E: _serde::de::Error,
+                    where
+                        __E: _serde::de::Error,
                     {
                         match __value {
                             b"id" => _serde::__private::Ok(__Field::__field0),
@@ -296,8 +296,8 @@ mod generated_some_struct {
                     fn deserialize<__D>(
                         __deserializer: __D,
                     ) -> _serde::__private::Result<Self, __D::Error>
-                        where
-                            __D: _serde::Deserializer<'de>,
+                    where
+                        __D: _serde::Deserializer<'de>,
                     {
                         _serde::Deserializer::deserialize_identifier(__deserializer, __FieldVisitor)
                     }
@@ -322,8 +322,8 @@ mod generated_some_struct {
                         self,
                         mut __seq: __A,
                     ) -> _serde::__private::Result<Self::Value, __A::Error>
-                        where
-                            __A: _serde::de::SeqAccess<'de>,
+                    where
+                        __A: _serde::de::SeqAccess<'de>,
                     {
                         let __field0 =
                             match match _serde::de::SeqAccess::next_element::<i32>(&mut __seq) {
@@ -405,20 +405,20 @@ mod generated_some_struct {
                         self,
                         mut __map: __A,
                     ) -> _serde::__private::Result<Self::Value, __A::Error>
-                        where
-                            __A: _serde::de::MapAccess<'de>,
+                    where
+                        __A: _serde::de::MapAccess<'de>,
                     {
                         let mut __field0: _serde::__private::Option<i32> = _serde::__private::None;
                         let mut __field1: _serde::__private::Option<i32> = _serde::__private::None;
                         let mut __field2: _serde::__private::Option<i32> = _serde::__private::None;
                         let mut __field3: _serde::__private::Option<i32> = _serde::__private::None;
                         while let _serde::__private::Some(__key) =
-                        match _serde::de::MapAccess::next_key::<__Field>(&mut __map) {
-                            _serde::__private::Ok(__val) => __val,
-                            _serde::__private::Err(__err) => {
-                                return _serde::__private::Err(__err);
+                            match _serde::de::MapAccess::next_key::<__Field>(&mut __map) {
+                                _serde::__private::Ok(__val) => __val,
+                                _serde::__private::Err(__err) => {
+                                    return _serde::__private::Err(__err);
+                                }
                             }
-                        }
                         {
                             match __key {
                                 __Field::__field0 => {
@@ -568,10 +568,9 @@ mod generated_some_struct {
             }
         }
     };
-    #[allow(clippy::from_over_into)]
-    impl Into<cdrs_tokio::types::value::Bytes> for SomeStructPrimaryKey {
-        fn into(self) -> cdrs_tokio::types::value::Bytes {
-            serde_json::to_string(&self).unwrap().into()
+    impl From<SomeStructPrimaryKey> for cdrs_tokio::types::value::Bytes {
+        fn from(s: SomeStructPrimaryKey) -> cdrs_tokio::types::value::Bytes {
+            serde_json::to_string(&s).unwrap().into()
         }
     }
     impl cdrs_tokio::types::prelude::TryFromRow for SomeStructPrimaryKey {

@@ -180,10 +180,7 @@ pub fn execute_command(
     let no_quotes = formatted.replace("\"", "");
     log::debug!("Executing command: {}", no_quotes);
 
-    // TODO: this doesn't work for test_derived_equals because it requires the nightly channel
-    // which doesn't work with clippy::from_over_into
-    // Keep it off for the CI for now, locally it works
-    if for_ci && package != "test_derived_equals" {
+    if for_ci {
         writeln!(yml, "{}- name: {} {}", whitespace, command, package).unwrap();
         writeln!(yml, "{}  run: {}", whitespace, no_quotes).unwrap();
     }
