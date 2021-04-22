@@ -218,7 +218,7 @@ mod test {
             fn json_mapping(&self, _table_name: &str, column_name: &str) -> Option<JsonMapping> {
                 if column_name.contains("json") {
                     return Some(JsonMapping {
-                        import: "crate::MyJsonType".to_string(),
+                        import: "".to_string(),
                         raw_type: quote! {
                             MyJsonType
                         },
@@ -227,6 +227,14 @@ mod test {
                 }
 
                 None
+            }
+
+            fn metadata(&self, struct_name: &str) -> Vec<String> {
+                if struct_name == "testjsonmapping" {
+                    vec!["use crate::MyJsonType;".to_string()]
+                } else {
+                    vec![]
+                }
             }
         }
 

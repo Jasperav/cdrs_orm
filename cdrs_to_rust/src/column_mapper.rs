@@ -101,7 +101,6 @@ pub(crate) fn properties_to_struct(
 
     quote! {
         #imports
-
         #(#metadata)*
         #[derive(#(#custom_derives),*)]
         pub struct #struct_name {
