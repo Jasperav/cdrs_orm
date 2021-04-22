@@ -14,8 +14,6 @@ pub(crate) fn column_to_property(
     transformer: &impl Transformer,
     file: &mut File,
 ) -> Vec<TokenStream> {
-    let mut added_imports = HashSet::new();
-
     columns
         .into_iter()
         .map(|c| {
@@ -37,15 +35,7 @@ pub(crate) fn column_to_property(
             let ty = if let Some(mapping) = transformer.json_mapping(table_name, &c.column_name) {
                 // Only text columns can be mapped to json
                 assert_eq!("text", &c.data_type);
-
-                if !mapping.import.is_empty() {
-                    let import = format!("use {};", mapping.import);
-
-                    // Don't add imports twice
-                    if added_imports.insert(import.clone()) {
-                        write!(file, "{}", &import).unwrap();
-                    }
-                }
+                write!(file, "{}", mapping.import).unwrap();
 
                 att.extend(quote! {
                     #[json_mapped]
