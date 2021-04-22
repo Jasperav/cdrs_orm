@@ -218,7 +218,7 @@ mod test {
             fn json_mapping(&self, _table_name: &str, column_name: &str) -> Option<JsonMapping> {
                 if column_name.contains("json") {
                     return Some(JsonMapping {
-                        import: "use crate::MyJsonType;".to_string(),
+                        import: "crate::MyJsonType".to_string(),
                         raw_type: quote! {
                             MyJsonType
                         },
