@@ -3,6 +3,7 @@ use cdrs_con::supported_data_types::CassandraDataType;
 use cdrs_con::ColumnKind;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::Write;
 
