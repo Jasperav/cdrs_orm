@@ -1,3 +1,8 @@
+❗This crates aren't maintained anymore. Consider using https://github.com/scylladb/scylla-rust-driver with the
+new orm: https://github.com/Jasperav/scylla_orm. The new orm provides much better code generation❗
+
+
+
 # Cassandra/ScyllaDB Object-Relation Mapper
 
 [![Latest Version](https://img.shields.io/crates/v/cdrs_orm.svg)](https://crates.io/crates/cdrs_orm)
